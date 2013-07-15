@@ -10,30 +10,33 @@ import org.mozilla.javascript.ScriptableObject;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+/**
+ * This controller takes charge of processing the requests registered with javascript handler.
+ * @author kminkim
+ *
+ */
 public class AtmosController implements Controller {
 	
-	Function jsHandler;
+	Function atmosHandler;
 	
-	public AtmosController(Function jsHandler) {
-		this.jsHandler = jsHandler;
+	public AtmosController(Function atmosHandler) {
+		this.atmosHandler = atmosHandler;
 	}
 
 	@Override
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		
-		ModelAndView mv = new ModelAndView();
-		
-		// Javascript Handler 실행을 위한 준비
+		// prepare with processing javascript handler
 		Object[] args = {(Object) request, (Object) response};
     	Context context = Context.enter();
     	ScriptableObject scope = context.initStandardObjects();
     	Scriptable that = context.newObject(scope);
     	
-    	// Javascript Handler 실행
-    	Object result = jsHandler.call(context, scope, that, args);
+    	// processing javascript handler
+    	atmosHandler.call(context, scope, that, args);
 		
-    	return mv;
+    	return new ModelAndView();
 	}
 
 }

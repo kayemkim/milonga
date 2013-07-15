@@ -2,8 +2,6 @@ package com.km.milonga.rhino;
 
 import java.io.File;
 import java.io.FileReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,77 +9,50 @@ import java.util.Map.Entry;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.commonjs.module.Require;
-import org.mozilla.javascript.commonjs.module.RequireBuilder;
-import org.mozilla.javascript.commonjs.module.provider.SoftCachingModuleScriptProvider;
-import org.mozilla.javascript.commonjs.module.provider.UrlModuleSourceProvider;
+import org.mozilla.javascript.tools.shell.Global;
 import org.springframework.beans.BeansException;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
+/**
+ * Extended urlHandlerMapping which registers user-defined url-handler mapping infos.
+ * The location of user-scripted sources can be configured. 
+ * This handlerMapping reads those source and registers handlerMappings. 
+ * @author kminkim
+ *
+ */
 public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
 	
+	/*
+	 * storage of url-handler mapping infos
+	 */
+	private AtmosRequestMappingInfo requestMappingInfo = AtmosRequestMappingInfo.getInstance();
+	
+	/*
+	 * Atmos library file location.
+	 */
 	private String atmosLibraryLocation;
 	
+	/*
+	 * Location of user-scripting javascript files.
+	 * This should be directory.
+	 */
 	private String userSourceLocation;
 	
+	/**
+	 * Setter of atmosLibraryLocation
+	 */
 	public void setAtmosLibraryLocation(String atmosLibraryLocation) {
 		this.atmosLibraryLocation = atmosLibraryLocation;
 	}
 	
+	/**
+	 * Setter of userSourceLocation
+	 */
 	public void setUserSourceLocation(String userSourceLocation) {
 		this.userSourceLocation = userSourceLocation;
 	}
-
-	public AtmosRequestMappingInfo jsRequestMapping() {
-		
-		try {
-			Context cx = Context.enter();
-			Scriptable scope = cx.initStandardObjects();
-			
-			// Require Setting
-			RequireBuilder rb = new RequireBuilder();
-			List<String> modulePath = new ArrayList<String>();
-			modulePath.add(atmosLibraryLocation);
-			List<URI> uris = new ArrayList<URI>();
-	        if (modulePath != null) {
-	            for (String path : modulePath) {
-	                try {
-	                    URI uri = new URI(path);
-	                    if (!uri.isAbsolute()) {
-	                        // call resolve("") to canonify the path
-	                        uri = new File(path).toURI().resolve("");
-	                    }
-	                    if (!uri.toString().endsWith("/")) {
-	                        // make sure URI always terminates with slash to
-	                        // avoid loading from unintended locations
-	                        uri = new URI(uri + "/");
-	                    }
-	                    uris.add(uri);
-	                } catch (URISyntaxException usx) {
-	                    throw new RuntimeException(usx);
-	                }
-	            }
-	        }
-	        rb.setModuleScriptProvider(
-	                new SoftCachingModuleScriptProvider(
-	                        new UrlModuleSourceProvider(uris, null)));
-	        Require require = rb.createRequire(cx, scope);
-	        
-	        require.install(scope);
-	        
-			File jsFile = new File("/Users/kminkim/Documents/workspace-sts/milonga/js/test.js");
-			FileReader reader = new FileReader(jsFile);
-			
-			cx.evaluateReader(scope, reader, "test.js", 1, null);
-			
-		} catch(Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		return AtmosRequestMappingInfo.getInstance();
-	}
+	
 	
 	@Override
 	public void initApplicationContext() throws BeansException {
@@ -94,15 +65,55 @@ public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
 	 * @throws BeansException if a handler couldn't be registered
 	 */
 	protected void registerAtmosHandlers() throws BeansException {
-		AtmosRequestMappingInfo  requestMapping = jsRequestMapping();
+		processAtmostRequestMappingInfo();
 		
-		Iterator<Entry<String, Object>> iterator = requestMapping.iterator(); 
+		Iterator<Entry<String, Object>> iterator = requestMappingInfo.iterator(); 
 		while(iterator.hasNext()) {
 			String url = iterator.next().getKey();
-			Function jsFunction = (Function) requestMapping.get(url);
+			Function jsFunction = (Function) requestMappingInfo.get(url);
 			Controller handler = new AtmosController(jsFunction);
 			registerHandler(url, handler);
 		}
+	}
+	
+	/**
+	 * Process all user scripting javascript files in configured location,
+	 * then url-handler mapping infos gotta be stored in memory.
+	 */
+	private void processAtmostRequestMappingInfo() {
+		
+		Context cx = Context.enter();
+		Global global = new Global(cx);
+		
+		// javascript library loading
+		List<String> modulePath = new ArrayList<String>();
+		
+		modulePath.add(getServletContextPath() + atmosLibraryLocation);
+		global.installRequire(cx, modulePath, false);
+		
+		try {
+			/*
+			 * execute all user scripting javascript files in configured location,
+			 * then url-handler infos gotta be stored in memory.
+			 */
+	        File dir = new File(getServletContextPath() + userSourceLocation);
+	        if(dir.isDirectory()) {
+	        	String[] fileArray = dir.list();
+	        	for(String fileName :fileArray) {
+	        		File jsFile = new File(dir.getAbsolutePath() + "/" + fileName);
+	        		if(jsFile.isFile()) {
+	        			FileReader reader = new FileReader(jsFile);
+		    			cx.evaluateReader(global, reader, fileName, 1, null);
+	        		}
+	        	}
+	        }
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	private String getServletContextPath() {
+		return getServletContext().getRealPath("/") + "/";
 	}
 
 }

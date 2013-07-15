@@ -29,7 +29,9 @@
 	
 	<!-- Javascript에 정의된 url/handler 매핑 정보를 다루는 Bean -->
 	<beans:bean class="com.km.milonga.rhino.AtmosHandlerMapping">
-		<beans:property name="atmosLibraryLocation" value="/Users/kminkim/Documents/workspace-sts/milonga/js/atmos"/>
+		<!-- <beans:property name="atmosLibraryLocation" value="/Users/kminkim/Documents/workspace-sts/milonga/js/atmos" /> -->
+		<beans:property name="atmosLibraryLocation" value="resources/js/atmos" />
+		<beans:property name="userSourceLocation" value="resources/js" />
 	</beans:bean>
 	
 	<context:component-scan base-package="com.km.milonga" />
