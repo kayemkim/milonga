@@ -15,9 +15,9 @@
 	</properties>
 	<repositories>
 		<repository>
-    		<id>spring-snapshot</id>
-    		<name>Spring Maven SNAPSHOT Repository</name>
-    		<url>http://repo.springsource.org/libs-snapshot</url>
+    		<id>spring-milestone</id>
+    		<name>Spring Portfolio Milestone Repository</name>
+    		<url>http://repo.springsource.org/milestone</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -135,7 +135,7 @@
 		<dependency>
   			<groupId>org.springframework</groupId>
   			<artifactId>spring-test-mvc</artifactId>
-  			<version>1.0.0.BUILD-SNAPSHOT</version>
+  			<version>1.0.0.M2</version>
   			<scope>test</scope>
 		</dependency>
 	</dependencies>

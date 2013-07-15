@@ -1,5 +1,7 @@
 package com.km.milonga.rhino;
 
+import java.util.Enumeration;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,7 +38,13 @@ public class AtmosController implements Controller {
     	// processing javascript handler
     	atmosHandler.call(context, scope, that, args);
 		
-    	return new ModelAndView();
+    	ModelAndView mav = new ModelAndView();
+    	Enumeration<String> attributeNames = request.getAttributeNames();
+    	while(attributeNames.hasMoreElements()) {
+    		String attributeName = attributeNames.nextElement();
+    		mav.addObject(attributeName, request.getAttribute(attributeName));
+    	}
+    	return mav;
 	}
 
 }
