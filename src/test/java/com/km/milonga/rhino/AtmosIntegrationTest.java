@@ -53,6 +53,13 @@ public class AtmosIntegrationTest {
 				.andExpect(view().name("test1"))
 				.andExpect(forwardedUrl("/WEB-INF/views/test1.jsp"))
 				.andExpect(model().attribute("newyork", "knicks"));
+		
+		mockMvc.perform(get("/test2"))
+		.andExpect(status().isOk())
+		.andExpect(view().name("test2"))
+		.andExpect(forwardedUrl("/WEB-INF/views/test2.jsp"))
+		.andExpect(model().attribute("newyork", "mets"));
+		
 	}
 
 }

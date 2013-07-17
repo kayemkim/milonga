@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
+import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.tools.shell.Global;
 import org.springframework.beans.BeansException;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
@@ -70,7 +71,7 @@ public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
 		Iterator<Entry<String, Object>> iterator = requestMappingInfo.iterator(); 
 		while(iterator.hasNext()) {
 			String url = iterator.next().getKey();
-			Function jsFunction = (Function) requestMappingInfo.get(url);
+			NativeFunction jsFunction = (NativeFunction) requestMappingInfo.get(url);
 			Controller handler = new AtmosController(jsFunction);
 			registerHandler(url, handler);
 		}

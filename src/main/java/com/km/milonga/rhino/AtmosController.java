@@ -1,5 +1,6 @@
 package com.km.milonga.rhino;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,9 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
+import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.debug.DebuggableScript;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -20,9 +22,9 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public class AtmosController implements Controller {
 	
-	Function atmosHandler;
+	NativeFunction atmosHandler;
 	
-	public AtmosController(Function atmosHandler) {
+	public AtmosController(NativeFunction atmosHandler) {
 		this.atmosHandler = atmosHandler;
 	}
 
@@ -31,26 +33,32 @@ public class AtmosController implements Controller {
 			HttpServletResponse response) throws Exception {
 		
 		// prepare with processing javascript handler
-		//Object[] args = {(Object) request, (Object) response};
-		//NativeObject jsonObj = new NativeObject();
-		Model model = new Model();
-		Object[] args = {model};
-    	Context context = Context.enter();
+		Context context = Context.enter();
     	ScriptableObject scope = context.initStandardObjects();
     	Scriptable that = context.newObject(scope);
     	
-    	// processing javascript handler
-    	atmosHandler.call(context, scope, that, args);
-    	
     	ModelAndView mav = new ModelAndView();
     	
-    	mav.addAllObjects(model.getAllObjects());
+    	// arguments : request, response
+    	if(atmosHandler.getLength() == 2) {
+    		Object[] args = {(Object) request, (Object) response};
+    		// processing javascript handler
+        	atmosHandler.call(context, scope, that, args);
+    		Enumeration<String> attributeNames = request.getAttributeNames();
+        	while(attributeNames.hasMoreElements()) {
+        		String attributeName = attributeNames.nextElement();
+        		mav.addObject(attributeName, request.getAttribute(attributeName));
+        	}
+    	}
+    	// arguments : model
+    	else if (atmosHandler.getLength() == 1) {
+    		Model model = new Model();
+    		Object[]args = {model};
+    		// processing javascript handler
+        	atmosHandler.call(context, scope, that, args);
+    		mav.addAllObjects(model.getAllObjects());
+    	}
     	
-    	/*Enumeration<String> attributeNames = request.getAttributeNames();
-    	while(attributeNames.hasMoreElements()) {
-    		String attributeName = attributeNames.nextElement();
-    		mav.addObject(attributeName, request.getAttribute(attributeName));
-    	}*/
     	return mav;
 	}
 	

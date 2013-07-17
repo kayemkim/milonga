@@ -6,9 +6,15 @@
 </head>
 <body>
 <h1>
-	Hello world!  
+	Login Page
 </h1>
 
-<P>  The time on the server is ${serverTime}. </P>
+<P>  
+	<form name="loginForm" action="/milonga/test2" method="post">
+  		id: <input type="text" name="id">
+  		password: <input type="password" name="password">
+  		<input type="submit" name="submitButton" value="login">
+	</form> 
+</P>
 </body>
 </html>
