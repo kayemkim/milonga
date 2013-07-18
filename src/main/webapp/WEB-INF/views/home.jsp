@@ -10,7 +10,7 @@
 </h1>
 
 <P>  
-	<form name="loginForm" action="/milonga/test2" method="post">
+	<form name="loginForm" action="/milonga/login" method="post">
   		id: <input type="text" name="id">
   		password: <input type="password" name="password">
   		<input type="submit" name="submitButton" value="login">

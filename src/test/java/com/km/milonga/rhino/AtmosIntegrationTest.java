@@ -42,24 +42,17 @@ public class AtmosIntegrationTest {
 	
 	@Test
 	public void connectTestUrl() throws Exception {
-		mockMvc.perform(get("/test"))
+		mockMvc.perform(get("/platform"))
 				.andExpect(status().isOk())
-				.andExpect(view().name("test"))
-				.andExpect(forwardedUrl("/WEB-INF/views/test.jsp"))
-				.andExpect(model().attribute("newyork", "mets"));
+				.andExpect(view().name("platform"))
+				.andExpect(forwardedUrl("/WEB-INF/views/platform.jsp"))
+				.andExpect(model().attribute("platform", "Atmos Code"));
 		
-		mockMvc.perform(get("/test1"))
+		mockMvc.perform(get("/library"))
 				.andExpect(status().isOk())
-				.andExpect(view().name("test1"))
-				.andExpect(forwardedUrl("/WEB-INF/views/test1.jsp"))
-				.andExpect(model().attribute("newyork", "knicks"));
-		
-		mockMvc.perform(get("/test2"))
-		.andExpect(status().isOk())
-		.andExpect(view().name("test2"))
-		.andExpect(forwardedUrl("/WEB-INF/views/test2.jsp"))
-		.andExpect(model().attribute("newyork", "mets"));
-		
+				.andExpect(view().name("library"))
+				.andExpect(forwardedUrl("/WEB-INF/views/library.jsp"))
+				.andExpect(model().attribute("library", "rhino"));
 	}
 
 }

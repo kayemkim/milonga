@@ -5,7 +5,7 @@
 </head>
 <body>
 <h1>
-	${newyork}  
+	Library is ${library}.  
 </h1>
 
 <P> Test is successful! </P>
