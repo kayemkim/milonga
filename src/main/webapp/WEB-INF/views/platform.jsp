@@ -5,9 +5,9 @@
 </head>
 <body>
 <h1>
-	${newyork}  
+	Platform is ${platform}.  
 </h1>
 
-<P> Test1 is successful! </P>
+<P> Test is successful! </P>
 </body>
 </html>

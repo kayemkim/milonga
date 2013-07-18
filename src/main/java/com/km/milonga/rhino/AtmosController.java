@@ -11,7 +11,6 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
-import org.mozilla.javascript.debug.DebuggableScript;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -31,7 +30,6 @@ public class AtmosController implements Controller {
 	@Override
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		
 		// prepare with processing javascript handler
 		Context context = Context.enter();
     	ScriptableObject scope = context.initStandardObjects();
@@ -39,8 +37,9 @@ public class AtmosController implements Controller {
     	
     	ModelAndView mav = new ModelAndView();
     	
+    	String encodedSource = atmosHandler.getEncodedSource();
     	// arguments : request, response
-    	if(atmosHandler.getLength() == 2) {
+    	if(atmosHandler.getLength() == 2 && encodedSource.indexOf("request") < 10 && encodedSource.indexOf("response") < 20) {
     		Object[] args = {(Object) request, (Object) response};
     		// processing javascript handler
         	atmosHandler.call(context, scope, that, args);
@@ -51,7 +50,10 @@ public class AtmosController implements Controller {
         	}
     	}
     	// arguments : model
-    	else if (atmosHandler.getLength() == 1) {
+    	else if (atmosHandler.getLength() == 1 && encodedSource.indexOf("model") < 10) {
+    		String object = atmosHandler.getEncodedSource();
+    		boolean has = atmosHandler.has("model", atmosHandler);
+    		
     		Model model = new Model();
     		Object[]args = {model};
     		// processing javascript handler

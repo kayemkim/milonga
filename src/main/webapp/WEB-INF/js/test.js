@@ -1,19 +1,19 @@
 var Atmos = require('atmos');
 
-Atmos.define('/test', function(model) {
-	var data = {"newyork" : "mets"};
-	model.setJson(data);
-});
-
-Atmos.define('/test1', function(model) {
-	model.setJson({"newyork" : "knicks"});
-});
-
-Atmos.define('/test2', function(request, response) {
-	request.setAttribute("newyork", "mets");
-});
-
 Atmos.define('/login', function(request, response) {
 	var id = request.getParameter("id");
 	var password = request.getParameter("password");
+	if(password != '1111') {
+		request.setAttribute("result", "failed");
+	} else {
+		request.setAttribute("result", "successful");
+	}
+});
+
+Atmos.define('/platform', function(request, response) {
+	request.setAttribute("platform", "Atmos Code");
+});
+
+Atmos.define('/library', function(model) {
+	model.setJson({"library" : "rhino"});
 });

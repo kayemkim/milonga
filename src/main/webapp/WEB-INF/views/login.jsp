@@ -8,6 +8,6 @@
 	${id}
 </h1>
 
-<P> Login is successful! </P>
+<P> Login is ${result}! </P>
 </body>
 </html>
