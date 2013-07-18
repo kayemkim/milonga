@@ -63,19 +63,5 @@ public class AtmosController implements Controller {
     	
     	return mav;
 	}
-	
-	public class Model {
-		
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		
-		public void setJson(Object json) {
-			if(json instanceof Map)
-				paramMap.putAll((Map<? extends String, ? extends Object>) json);
-		}
-		
-		public Map<String, Object> getAllObjects() {
-			return paramMap;
-		}
-	}
 
 }
