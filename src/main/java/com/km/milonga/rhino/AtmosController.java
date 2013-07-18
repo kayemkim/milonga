@@ -39,8 +39,10 @@ public class AtmosController implements Controller {
     	
     	String encodedSource = atmosHandler.getEncodedSource();
     	// arguments : request, response
-    	if(atmosHandler.getLength() == 2 && encodedSource.indexOf("request") < 10 && encodedSource.indexOf("response") < 20) {
-    		Object[] args = {(Object) request, (Object) response};
+    	if(atmosHandler.getLength() == 2 
+    			&& encodedSource.indexOf("request") < 10 
+    			&& encodedSource.indexOf("response") < 20) {
+    		Object[] args = {request, response};
     		// processing javascript handler
         	atmosHandler.call(context, scope, that, args);
     		Enumeration<String> attributeNames = request.getAttributeNames();
@@ -50,15 +52,13 @@ public class AtmosController implements Controller {
         	}
     	}
     	// arguments : model
-    	else if (atmosHandler.getLength() == 1 && encodedSource.indexOf("model") < 10) {
-    		String object = atmosHandler.getEncodedSource();
-    		boolean has = atmosHandler.has("model", atmosHandler);
-    		
-    		Model model = new Model();
-    		Object[]args = {model};
+    	else if (atmosHandler.getLength() == 1 && 
+    			encodedSource.indexOf("request") < 10) {
+    		Object[]args = {request};
     		// processing javascript handler
-        	atmosHandler.call(context, scope, that, args);
-    		mav.addAllObjects(model.getAllObjects());
+        	Map<String, Object> result = (Map<String, Object>) atmosHandler
+        			.call(context, scope, that, args);
+        	mav.addAllObjects(result);
     	}
     	
     	return mav;
