@@ -4,5 +4,15 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
-		
+	
+	<bean id="argumentChecker" class="com.km.milonga.rhino.ArgumentChecker">
+		<property name="policyList">
+			<list>
+				<value>com.km.milonga.rhino.JsgiStyleCheckPolicy</value>
+				<value>com.km.milonga.rhino.JsonStyleCheckPolicy</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="atmosRequestMappingInfo" class="com.km.milonga.rhino.AtmosRequestMappingInfo"/>
 </beans>

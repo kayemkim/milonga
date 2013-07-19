@@ -14,6 +14,6 @@ Atmos.define('/platform', function(request, response) {
 	request.setAttribute("platform", "Atmos Code");
 });
 
-Atmos.define('/library', function(model) {
-	model.setJson({"library" : "rhino"});
+Atmos.define('/library', function(request) {
+	return {"library" : "rhino"};
 });
