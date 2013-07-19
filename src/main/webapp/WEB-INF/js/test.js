@@ -15,5 +15,5 @@ Atmos.define('/platform', function(request, response) {
 });
 
 Atmos.define('/library', function(request) {
-	return {"library" : "rhino"};
+	return {"library" : "jdk"};
 });

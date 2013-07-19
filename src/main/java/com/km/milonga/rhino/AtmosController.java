@@ -1,28 +1,25 @@
 package com.km.milonga.rhino;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * This controller takes charge of processing the requests registered with javascript handler.
+ * This controller takes charge of processing the requests registered with
+ * javascript handler.
+ * 
  * @author kminkim
- *
+ * 
  */
 public class AtmosController implements Controller {
-	
+
 	NativeFunction atmosHandler;
-	
+
 	public AtmosController(NativeFunction atmosHandler) {
 		this.atmosHandler = atmosHandler;
 	}
@@ -30,38 +27,13 @@ public class AtmosController implements Controller {
 	@Override
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		// prepare with processing javascript handler
-		Context context = Context.enter();
-    	ScriptableObject scope = context.initStandardObjects();
-    	Scriptable that = context.newObject(scope);
-    	
-    	ModelAndView mav = new ModelAndView();
-    	
-    	String encodedSource = atmosHandler.getEncodedSource();
-    	// arguments : request, response
-    	if(atmosHandler.getLength() == 2 
-    			&& encodedSource.indexOf("request") < 10 
-    			&& encodedSource.indexOf("response") < 20) {
-    		Object[] args = {request, response};
-    		// processing javascript handler
-        	atmosHandler.call(context, scope, that, args);
-    		Enumeration<String> attributeNames = request.getAttributeNames();
-        	while(attributeNames.hasMoreElements()) {
-        		String attributeName = attributeNames.nextElement();
-        		mav.addObject(attributeName, request.getAttribute(attributeName));
-        	}
-    	}
-    	// arguments : model
-    	else if (atmosHandler.getLength() == 1 && 
-    			encodedSource.indexOf("request") < 10) {
-    		Object[]args = {request};
-    		// processing javascript handler
-        	Map<String, Object> result = (Map<String, Object>) atmosHandler
-        			.call(context, scope, that, args);
-        	mav.addAllObjects(result);
-    	}
-    	
-    	return mav;
+
+		ApplicationContext context = WebApplicationContextUtils
+				.getWebApplicationContext(request.getSession()
+						.getServletContext());
+		ArgumentChecker argumentChecker = context
+				.getBean(ArgumentChecker.class);
+		return argumentChecker.checkAndProcess(atmosHandler, request, response);
 	}
 
 }
