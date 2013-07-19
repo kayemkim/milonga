@@ -29,8 +29,8 @@ public class ArgumentChecker {
 					.getConstructor(int.class, Object[].class);
 			ArgumentCheckPolicy policyObj = policyConst.newInstance(
 					argumentsCount, new Object[] { request, response });
-			if (policyObj.isOk(atmosHandler)) {
-				return policyObj.result(atmosHandler);
+			if (policyObj.isValidated(atmosHandler)) {
+				return policyObj.apply(atmosHandler);
 			}
 		}
 

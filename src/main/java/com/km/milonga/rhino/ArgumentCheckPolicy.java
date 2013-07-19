@@ -20,8 +20,8 @@ public abstract class ArgumentCheckPolicy {
 		this.args = args;
 	}
 
-	public abstract boolean isOk(NativeFunction atmosHandler);
+	public abstract boolean isValidated(NativeFunction atmosHandler);
 
-	public abstract ModelAndView result(NativeFunction atmosHandler);
+	public abstract ModelAndView apply(NativeFunction atmosHandler);
 
 }

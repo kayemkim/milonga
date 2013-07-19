@@ -12,14 +12,14 @@ public class JsonStyleCheckPolicy extends ArgumentCheckPolicy {
 	}
 
 	@Override
-	public boolean isOk(NativeFunction atmosHandler) {
+	public boolean isValidated(NativeFunction atmosHandler) {
 		String encodedSource = atmosHandler.getEncodedSource();
 		return atmosHandler.getLength() == 1
 				&& encodedSource.indexOf("request") < 10;
 	}
 
 	@Override
-	public ModelAndView result(NativeFunction atmosHandler) {
+	public ModelAndView apply(NativeFunction atmosHandler) {
 		ModelAndView mav = new ModelAndView();
 
 		// processing javascript handler

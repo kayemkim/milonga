@@ -14,7 +14,7 @@ public class JsgiStyleCheckPolicy extends ArgumentCheckPolicy {
 	}
 
 	@Override
-	public boolean isOk(NativeFunction atmosHandler) {
+	public boolean isValidated(NativeFunction atmosHandler) {
 		String encodedSource = atmosHandler.getEncodedSource();
 		return atmosHandler.getLength() == 2
 				&& encodedSource.indexOf("request") < 10
@@ -22,7 +22,7 @@ public class JsgiStyleCheckPolicy extends ArgumentCheckPolicy {
 	}
 
 	@Override
-	public ModelAndView result(NativeFunction atmosHandler) {
+	public ModelAndView apply(NativeFunction atmosHandler) {
 		ModelAndView mav = new ModelAndView();
 
 		atmosHandler.call(context, scope, scope, args);
