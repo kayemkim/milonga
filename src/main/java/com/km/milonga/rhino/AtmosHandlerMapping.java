@@ -9,11 +9,15 @@ import java.util.Map.Entry;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.debug.Debugger;
+import org.mozilla.javascript.tools.debugger.Dim;
 import org.mozilla.javascript.tools.shell.Global;
 import org.springframework.beans.BeansException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
+
+import com.km.milonga.rhino.debug.RhinoDebuggerFactory;
 
 /**
  * Extended urlHandlerMapping which registers user-defined url-handler mapping
@@ -100,9 +104,14 @@ public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
 		global.installRequire(cx, modulePath, false);
 
 		try {
+			// optimization level -1 means interpret mode
+			cx.setOptimizationLevel(-1);
+			Debugger debugger = RhinoDebuggerFactory.create();
+			cx.setDebugger(debugger, new Dim.ContextData());
+			
 			/*
 			 * execute all user scripting javascript files in configured
-			 * location, then url-handler infos gotta be stored in memory.
+			 * location, then url-handler informations gotta be stored in memory.
 			 */
 			File dir = new File(getServletContextPath() + userSourceLocation);
 			if (dir.isDirectory()) {

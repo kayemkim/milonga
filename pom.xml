@@ -138,6 +138,13 @@
   			<version>1.0.0.M2</version>
   			<scope>test</scope>
 		</dependency>
+		
+		<!-- Jackson -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.10</version>
+		</dependency>
 	</dependencies>
     <build>
         <plugins>

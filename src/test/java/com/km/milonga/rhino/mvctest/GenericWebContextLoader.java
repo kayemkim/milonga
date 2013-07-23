@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.km.milonga.rhino;
+package com.km.milonga.rhino.mvctest;
 
 import javax.servlet.RequestDispatcher;
 
