@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 
 import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.debug.DebuggableScript;
 import org.springframework.web.servlet.ModelAndView;
 
 public class JsgiStyleCheckPolicy extends ArgumentCheckPolicy {
@@ -15,10 +16,13 @@ public class JsgiStyleCheckPolicy extends ArgumentCheckPolicy {
 
 	@Override
 	public boolean isValidated(NativeFunction atmosHandler) {
-		String encodedSource = atmosHandler.getEncodedSource();
-		return atmosHandler.getLength() == 2
-				&& encodedSource.indexOf("request") < 10
-				&& encodedSource.indexOf("response") < 20;
+		DebuggableScript dScript = atmosHandler.getDebuggableView();
+		if (dScript.getParamCount() == 2
+				&& dScript.getParamOrVarName(0).equals("request")
+				&& dScript.getParamOrVarName(1).equals("response")) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
