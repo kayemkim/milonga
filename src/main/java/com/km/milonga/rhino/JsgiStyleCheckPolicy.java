@@ -16,6 +16,10 @@ public class JsgiStyleCheckPolicy extends ArgumentCheckPolicy {
 
 	@Override
 	public boolean isValidated(NativeFunction atmosHandler) {
+		/*String encodedSource = atmosHandler.getEncodedSource();
+		return atmosHandler.getLength() == 2
+				&& encodedSource.indexOf("request") < 10
+				&& encodedSource.indexOf("response") < 20;*/
 		DebuggableScript dScript = atmosHandler.getDebuggableView();
 		if (dScript.getParamCount() == 2
 				&& dScript.getParamOrVarName(0).equals("request")
