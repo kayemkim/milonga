@@ -3,6 +3,7 @@ package com.km.milonga.rhino;
 import java.util.Map;
 
 import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.debug.DebuggableScript;
 import org.springframework.web.servlet.ModelAndView;
 
 public class JsonStyleCheckPolicy extends ArgumentCheckPolicy {
@@ -13,9 +14,12 @@ public class JsonStyleCheckPolicy extends ArgumentCheckPolicy {
 
 	@Override
 	public boolean isValidated(NativeFunction atmosHandler) {
-		String encodedSource = atmosHandler.getEncodedSource();
-		return atmosHandler.getLength() == 1
-				&& encodedSource.indexOf("request") < 10;
+		DebuggableScript dScript = atmosHandler.getDebuggableView();
+		if (dScript.getParamCount() == 1
+				&& dScript.getParamOrVarName(0).equals("request")) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

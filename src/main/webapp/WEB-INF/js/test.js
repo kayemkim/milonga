@@ -17,3 +17,9 @@ Atmos.define('/platform', function(request, response) {
 Atmos.define('/library', function(request) {
 	return {"library" : "jdk"};
 });
+
+Atmos.define('/monday', function(request) {
+	var name = request.getParameter("name");
+	name += " is registered.";
+	return {"result" : name};
+});

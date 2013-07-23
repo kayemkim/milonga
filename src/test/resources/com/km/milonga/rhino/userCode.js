@@ -1,7 +1,9 @@
-var define = function(param) {
+var before = function(param) {
 	
-}
+};
 
-var testFunc = function(param) {
+var define = before;
+
+var testFunc = function( param ) {
 	
-}
+};
