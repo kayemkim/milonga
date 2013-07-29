@@ -21,3 +21,9 @@ Atmos.define('/library', function(request) {
 Atmos.define('/create_response', function(request) {
 	return new Response("Hello Response!");
 });
+
+Atmos.define('/add_cookie', function(request) {
+	var response = new Response();
+	response.setCookie("userId", "metsmania");
+	return response;
+});

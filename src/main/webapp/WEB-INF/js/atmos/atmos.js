@@ -16,7 +16,9 @@ function Response(content) {
 };
 
 Response.prototype = {
-	cookie: {},
+	cookie: {
+		
+	},
 	
 	getContent: function() {
 		return this.content;
@@ -28,6 +30,10 @@ Response.prototype = {
 	
 	setCookie: function(name, value) {
 		this.cookie[name] = value;
+	},
+	
+	getCookie: function(name) {
+		return this.cookie[name];
 	}
 };
 

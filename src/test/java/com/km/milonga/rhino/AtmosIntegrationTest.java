@@ -55,7 +55,8 @@ public class AtmosIntegrationTest {
 		mockMvc.perform(get("/create_response")).andExpect(status().isOk())
 				.andExpect(content().string("Hello Response!"));
 		
-		//mockMvc.perform(get("/return_nothing")).andExpect(status().isOk());
+		mockMvc.perform(get("/add_cookie")).andExpect(status().isOk())
+				.andExpect(cookie().value("userId", "metsmania"));
 		
 	}
 
