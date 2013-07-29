@@ -51,6 +51,13 @@ public class AtmosIntegrationTest {
 				.andExpect(view().name("library"))
 				.andExpect(forwardedUrl("/WEB-INF/views/library.jsp"))
 				.andExpect(model().attribute("library", "rhino"));
+		
+		mockMvc.perform(get("/create_response")).andExpect(status().isOk())
+				.andExpect(content().string("Hello Response!"));
+		
+		mockMvc.perform(get("/add_cookie")).andExpect(status().isOk())
+				.andExpect(cookie().value("userId", "metsmania"));
+		
 	}
 
 }

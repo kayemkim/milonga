@@ -30,7 +30,7 @@ public class ArgumentChecker {
 			ArgumentCheckPolicy policyObj = policyConst.newInstance(
 					argumentsCount, new Object[] { request, response });
 			if (policyObj.isValidated(atmosHandler)) {
-				return policyObj.apply(atmosHandler);
+				return policyObj.apply(atmosHandler, response);
 			}
 		}
 
