@@ -18,7 +18,8 @@ package com.km.milonga.rhino.mvctest;
 public class WebContextLoader extends GenericWebContextLoader {
 
 	public WebContextLoader() {
-		super("src/test/resources/META-INF/web-resources", false);
+		//super("src/test/resources/META-INF/web-resources", false);
+		super("src/main/webapp", false);
 	}
 
 }

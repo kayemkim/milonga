@@ -3,6 +3,7 @@ package com.km.milonga.rhino;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.debug.DebuggableScript;
@@ -26,7 +27,7 @@ public class JsgiStyleCheckPolicy extends ArgumentCheckPolicy {
 	}
 
 	@Override
-	public ModelAndView apply(NativeFunction atmosHandler) {
+	public ModelAndView apply(NativeFunction atmosHandler, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView();
 
 		atmosHandler.call(context, scope, scope, args);

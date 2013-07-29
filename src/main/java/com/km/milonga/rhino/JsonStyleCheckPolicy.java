@@ -1,8 +1,12 @@
 package com.km.milonga.rhino;
 
+import java.io.IOException;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.debug.DebuggableScript;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,13 +27,24 @@ public class JsonStyleCheckPolicy extends ArgumentCheckPolicy {
 	}
 
 	@Override
-	public ModelAndView apply(NativeFunction atmosHandler) {
-		ModelAndView mav = new ModelAndView();
+	public ModelAndView apply(NativeFunction atmosHandler, HttpServletResponse response) {
+		ModelAndView mav = null;
 
+		NativeObject result = (NativeObject) atmosHandler.call(context, scope, scope, args);
+		
 		// processing javascript handler
-		Map<String, Object> result = (Map<String, Object>) atmosHandler.call(
-				context, scope, scope, args);
-		mav.addAllObjects(result);
+		if(result.containsKey("content")) {
+			try {
+				response.getWriter().write((String) result.get("content"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else {
+			mav = new ModelAndView();
+			mav.addAllObjects((Map<String, Object>) result);
+		}
 
 		return mav;
 	}

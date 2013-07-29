@@ -1,4 +1,4 @@
-var Atmos = require('atmos');
+//var Atmos = require('atmos');
 
 Atmos.define('/login', function(request, response) {
 	var id = request.getParameter("id");
@@ -15,11 +15,9 @@ Atmos.define('/platform', function(request, response) {
 });
 
 Atmos.define('/library', function(request) {
-	return {"library" : "jdk"};
+	return {"library" : "rhino"};
 });
 
-Atmos.define('/monday', function(request) {
-	var name = request.getParameter("name");
-	name += " is registered.";
-	return {"result" : name};
+Atmos.define('/create_response', function(request) {
+	return new Response("Hello Response!");
 });

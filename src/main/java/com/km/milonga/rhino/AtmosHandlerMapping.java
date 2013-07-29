@@ -102,12 +102,16 @@ public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
 
 		modulePath.add(getServletContextPath() + atmosLibraryLocation);
 		global.installRequire(cx, modulePath, false);
-
+		
 		try {
 			// optimization level -1 means interpret mode
 			cx.setOptimizationLevel(-1);
 			Debugger debugger = RhinoDebuggerFactory.create();
 			cx.setDebugger(debugger, new Dim.ContextData());
+			
+			String path = getServletContextPath() + atmosLibraryLocation + "/atmos.js";
+			FileReader atmosReader = new FileReader(getServletContextPath() + atmosLibraryLocation + "/atmos.js");
+			cx.evaluateReader(global, atmosReader, "atmos.js", 1, null);
 			
 			/*
 			 * execute all user scripting javascript files in configured
