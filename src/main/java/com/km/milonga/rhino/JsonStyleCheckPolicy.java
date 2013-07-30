@@ -41,8 +41,6 @@ public class JsonStyleCheckPolicy extends ArgumentCheckPolicy {
 		Object responseContent = result.get("content");
 		// processing javascript handler
 		if (responseContent != null) {
-			mav = new ModelAndView();
-			mav.setView(null);
 			try {
 
 				response.getWriter().write((String) responseContent);

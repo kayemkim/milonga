@@ -5,11 +5,20 @@
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	
-	<bean id="argumentChecker" class="com.km.milonga.rhino.ArgumentChecker">
+	<!-- <bean id="argumentChecker" class="com.km.milonga.rhino.ArgumentChecker">
 		<property name="policyList">
 			<list>
 				<value>com.km.milonga.rhino.JsgiStyleCheckPolicy</value>
 				<value>com.km.milonga.rhino.JsonStyleCheckPolicy</value>
+			</list>
+		</property>
+	</bean> -->
+	
+	<bean id="atmosFunctionChecker" class="com.km.milonga.servlet.checker.AtmosFunctionChecker">
+		<property name="validatorList">
+			<list>
+				<value>com.km.milonga.servlet.checker.AtmosHttpRequestHandlerValidator</value>
+				<value>com.km.milonga.servlet.checker.AtmosControllerHandlerValidator</value>
 			</list>
 		</property>
 	</bean>

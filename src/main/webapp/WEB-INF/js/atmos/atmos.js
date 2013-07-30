@@ -30,10 +30,6 @@ Response.prototype = {
 	
 	setCookie: function(name, value) {
 		this.cookie[name] = value;
-	},
-	
-	getCookie: function(name) {
-		return this.cookie[name];
 	}
 };
 
