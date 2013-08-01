@@ -21,12 +21,6 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<!-- <beans:bean class="com.km.milonga.rhino.AtmosHandlerMapping">
-		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfo" />
-		<beans:property name="atmosLibraryLocation" value="WEB-INF/js/atmos" />
-		<beans:property name="userSourceLocation" value="WEB-INF/js" />
-	</beans:bean> -->
-	
 	<beans:bean class="com.km.milonga.servlet.handler.AtmosUrlHandlerMapping">
 		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfo" />
 		<beans:property name="atmosLibraryLocation" value="WEB-INF/js/atmos" />
