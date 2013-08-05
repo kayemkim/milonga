@@ -43,3 +43,35 @@ exports.define = function(url, handler) {
 	mappingInfo.put(url, handler);
 };
 */
+
+function route(url) {
+	return new Route(url);
+};
+
+function Route(url) {
+	this.url = url;
+};
+
+Route.prototype = {
+	content: function(content) {
+		Atmos.define(this.url, function(request) {
+			return new Response(content);
+		});
+	},
+	json: function(jsonObj) {
+		Atmos.define(this.url, function(request) {
+			return jsonObj;
+		});
+	},
+	response: function(response) {
+		Atmos.define(this.url, function(request) {
+			return response;
+		});
+	},
+	define: function(process) {
+		Atmos.define(this.url, process);
+	}
+	
+};
+
+

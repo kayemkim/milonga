@@ -10,20 +10,18 @@ Atmos.define('/login', function(request, response) {
 	}
 });
 
-Atmos.define('/platform', function(request, response) {
+route('/platform').define(function(request, response) {
 	request.setAttribute("platform", "Atmos Code");
 });
 
-Atmos.define('/library', function(request) {
-	return {"library" : "rhino"};
-});
+route('/library').response({"library" : "rhino"});
 
-Atmos.define('/create_response', function(request) {
-	return new Response("Hello Response!");
-});
+route('/create_response').response(new Response("Hello Response!"));
 
-Atmos.define('/add_cookie', function(request) {
+route('/add_cookie').define(function(request) {
 	var response = new Response();
-	response.setCookie("userId", "metsmania");
+	response.cookie.userId = "metsmania";
+	var message = "User ID : " +response.cookie.userId;
+	response.setContent(message.toString());
 	return response;
 });
