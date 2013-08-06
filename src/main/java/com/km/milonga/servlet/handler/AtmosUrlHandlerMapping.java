@@ -1,7 +1,8 @@
-package com.km.milonga.rhino;
+package com.km.milonga.servlet.handler;
 
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,19 +16,12 @@ import org.mozilla.javascript.tools.shell.Global;
 import org.springframework.beans.BeansException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
-import org.springframework.web.servlet.mvc.Controller;
 
+import com.km.milonga.rhino.AtmosRequestMappingInfo;
 import com.km.milonga.rhino.debug.RhinoDebuggerFactory;
+import com.km.milonga.servlet.checker.AtmosFunctionChecker;
 
-/**
- * Extended urlHandlerMapping which registers user-defined url-handler mapping
- * infos. The location of user-scripted sources can be configured. This
- * handlerMapping reads those source and registers handlerMappings.
- * 
- * @author kminkim
- * 
- */
-public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
+public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
 	/*
 	 * storage of url-handler mapping infos
@@ -44,6 +38,14 @@ public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
 	 */
 	private String userSourceLocation;
 
+	/*
+	 * Checker for checking javascript function signature 
+	 */
+	private AtmosFunctionChecker functionChecker;
+
+	/**
+	 * Setter of requestMappingInfo
+	 */
 	public void setRequestMappingInfo(AtmosRequestMappingInfo requestMappingInfo) {
 		this.requestMappingInfo = requestMappingInfo;
 	}
@@ -60,6 +62,13 @@ public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
 	 */
 	public void setUserSourceLocation(String userSourceLocation) {
 		this.userSourceLocation = userSourceLocation;
+	}
+
+	/**
+	 * Setter of functionChecker
+	 */
+	public void setFunctionChecker(AtmosFunctionChecker functionChecker) {
+		this.functionChecker = functionChecker;
 	}
 
 	@Override
@@ -81,10 +90,10 @@ public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
 				.iterator();
 		while (iterator.hasNext()) {
 			String url = iterator.next().getKey();
-			NativeFunction jsFunction = (NativeFunction) requestMappingInfo
+			NativeFunction atmosFunction = (NativeFunction) requestMappingInfo
 					.get(url);
-			Controller handler = new AtmosController(jsFunction);
-			registerHandler(url, handler);
+
+			registerJsFunctionAsHandler(url, atmosFunction);
 		}
 	}
 
@@ -102,20 +111,23 @@ public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
 
 		modulePath.add(getServletContextPath() + atmosLibraryLocation);
 		global.installRequire(cx, modulePath, false);
-		
+
 		try {
 			// optimization level -1 means interpret mode
 			cx.setOptimizationLevel(-1);
 			Debugger debugger = RhinoDebuggerFactory.create();
 			cx.setDebugger(debugger, new Dim.ContextData());
-			
-			String path = getServletContextPath() + atmosLibraryLocation + "/atmos.js";
-			FileReader atmosReader = new FileReader(getServletContextPath() + atmosLibraryLocation + "/atmos.js");
+
+			String path = getServletContextPath() + atmosLibraryLocation
+					+ "/atmos.js";
+			FileReader atmosReader = new FileReader(getServletContextPath()
+					+ atmosLibraryLocation + "/atmos.js");
 			cx.evaluateReader(global, atmosReader, "atmos.js", 1, null);
-			
+
 			/*
 			 * execute all user scripting javascript files in configured
-			 * location, then url-handler informations gotta be stored in memory.
+			 * location, then url-handler informations gotta be stored in
+			 * memory.
 			 */
 			File dir = new File(getServletContextPath() + userSourceLocation);
 			if (dir.isDirectory()) {
@@ -142,6 +154,32 @@ public class AtmosHandlerMapping extends AbstractUrlHandlerMapping {
 
 	private String getServletContextPath() {
 		return getServletContext().getRealPath("/") + "/";
+	}
+
+	/**
+	 * Register javascript function as a Spring handler for specific URL.
+	 * 
+	 * @param url
+	 *            Handler URL
+	 * @param atmosFunction
+	 *            Javascript function to be handler
+	 */
+	private void registerJsFunctionAsHandler(String url,
+			NativeFunction atmosFunction) {
+
+		try {
+
+			Class<?> handlerTypeClass = functionChecker
+					.checkAndProcess(atmosFunction);
+			Constructor<?> handlerConst = handlerTypeClass
+					.getConstructor(NativeFunction.class);
+			Object handler = handlerConst.newInstance(atmosFunction);
+			registerHandler(url, handler);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

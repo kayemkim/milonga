@@ -21,12 +21,15 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<!-- Javascript에 정의된 url/handler 매핑 정보를 다루는 Bean -->
-	<beans:bean class="com.km.milonga.rhino.AtmosHandlerMapping">
+	<beans:bean class="com.km.milonga.servlet.handler.AtmosUrlHandlerMapping">
 		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfo" />
 		<beans:property name="atmosLibraryLocation" value="WEB-INF/js/atmos" />
 		<beans:property name="userSourceLocation" value="WEB-INF/js" />
+		<beans:property name="functionChecker" ref="atmosFunctionChecker"/>
 	</beans:bean>
+	
+	<!-- HandlerAdapter for handling simple request and response -->
+	<beans:bean class="com.km.milonga.servlet.handler.AtmosHandlerAdapter" />
 	
 	<context:component-scan base-package="com.km.milonga" />
 	

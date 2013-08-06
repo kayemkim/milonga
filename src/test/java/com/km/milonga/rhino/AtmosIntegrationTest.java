@@ -17,8 +17,11 @@ import org.springframework.web.context.WebApplicationContext;
 import com.km.milonga.rhino.mvctest.WebContextLoader;
 
 /**
- * Milonga Integration Test 1. read test.js 2. register url-handler infos into
- * memory 3. request /test, /test1 4. check the result
+ * Milonga Integration Test 
+ * 1. read test.js 
+ * 2. register url-handler infos into memory 
+ * 3. request /test 
+ * 4. check the result
  * 
  * This is Spring MVC Test.
  * 
@@ -48,9 +51,7 @@ public class AtmosIntegrationTest {
 				.andExpect(model().attribute("platform", "Atmos Code"));
 
 		mockMvc.perform(get("/library")).andExpect(status().isOk())
-				.andExpect(view().name("library"))
-				.andExpect(forwardedUrl("/WEB-INF/views/library.jsp"))
-				.andExpect(model().attribute("library", "rhino"));
+				.andExpect(content().string("{\"library\":\"rhino\"}"));
 		
 		mockMvc.perform(get("/create_response")).andExpect(status().isOk())
 				.andExpect(content().string("Hello Response!"));
