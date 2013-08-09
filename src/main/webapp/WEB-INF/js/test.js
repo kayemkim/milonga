@@ -11,7 +11,17 @@ Atmos.define('/login', function(request, response) {
 });
 
 route('/platform').define(function(request, response) {
-	request.setAttribute("platform", "Atmos Code");
+	return {
+				"platform" : "Atmos Code",
+				"developer" : {
+								"name" : "km",
+								"company" : {
+											  "companyName" : "SKP"
+								},
+								"age" : 33,
+								"family" : ["wife", "father", "mother", "brother"]
+				}
+			}; 
 });
 
 route('/library').response({"library" : "rhino"});

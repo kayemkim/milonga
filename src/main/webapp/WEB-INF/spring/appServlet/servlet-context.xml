@@ -14,9 +14,24 @@
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
+	
+	<!-- Scalate View Resolver -->
+	<!-- <beans:bean class="org.fusesource.scalate.spring.view.ScalateViewResolver">
+		<beans:property name="order" value="1" />
+		<beans:property name="prefix" value="/WEB-INF/views/scalate/" />
+		<beans:property name="suffix" value=".ssp" />
+	</beans:bean> -->
+	
+	<beans:bean class="com.km.milonga.template.AtmosScalateViewResolver">
+		<beans:property name="order" value="1" />
+		<beans:property name="prefix" value="/WEB-INF/views/scalate/" />
+		<beans:property name="suffix" value=".ssp" />
+	</beans:bean>
 
+	
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="order" value="2" />
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>

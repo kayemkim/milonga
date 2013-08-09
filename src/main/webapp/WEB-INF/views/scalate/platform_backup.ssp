@@ -1,0 +1,12 @@
+<%@ val platform: String %>
+<%@ val developer: org.mozilla.javascript.NativeObject %>
+
+<%@ val mapmap: java.util.Map[String, Object] %>
+
+<% val m2: Map[String, Any] = mapmap.toMap %>
+<% System.out.println("mixed"); %>
+
+${platform}
+${platform}
+${developer.get("name")}
+${m2.get("sub")}

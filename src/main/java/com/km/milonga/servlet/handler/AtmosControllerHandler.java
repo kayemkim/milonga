@@ -2,6 +2,8 @@ package com.km.milonga.servlet.handler;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.Undefined;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -34,14 +38,22 @@ public class AtmosControllerHandler {
 		Context context = Context.enter();
 		Scriptable scope = context.initStandardObjects();
 
-		atmosFunction.call(context, scope,
-				scope, new Object[] { request, response });
-		
-		// request attributes to Model
-		Enumeration<String> attributeNames = request.getAttributeNames();
-		while (attributeNames.hasMoreElements()) {
-			String attributeName = attributeNames.nextElement();
-			mv.addObject(attributeName, request.getAttribute(attributeName));
+		Object result = atmosFunction.call(context, scope, scope, new Object[] {
+				request, response });
+		if (result instanceof Undefined) {
+			// request attributes to Model
+			Enumeration<String> attributeNames = request.getAttributeNames();
+			while (attributeNames.hasMoreElements()) {
+				String attributeName = attributeNames.nextElement();
+				//mv.addObject(attributeName, request.getAttribute(attributeName));
+			}
+		} else if (result instanceof NativeObject) {
+			Iterator<Entry<Object, Object>> i = ((NativeObject) result).entrySet().iterator();
+			while(i.hasNext()) {
+				Entry<Object, Object> e = i.next();
+				String key = e.getKey().toString();
+				mv.addObject(e.getKey().toString(), e.getValue());
+			}
 		}
 		
 		return mv;
