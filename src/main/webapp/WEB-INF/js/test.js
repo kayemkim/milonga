@@ -8,6 +8,11 @@ Atmos.define('/login', function(request, response) {
 	} else {
 		request.setAttribute("result", "successful");
 	}
+	var user = new Object();
+	user.login = request.getParameter("login");
+	user.result = request.getAttribute("result");
+	return user;
+	
 });
 
 route('/platform').define(function(request, response) {
@@ -20,7 +25,8 @@ route('/platform').define(function(request, response) {
 								},
 								"age" : 33,
 								"family" : ["wife", "father", "mother", "brother"]
-				}
+				},
+				"users" : ["Tom", "John"]
 			}; 
 });
 

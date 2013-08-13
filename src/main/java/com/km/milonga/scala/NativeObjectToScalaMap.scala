@@ -31,10 +31,6 @@ object NativeObjectToScalaMap {
     System.out.println(result.get("key_1"))
     System.out.println(result.get("key_2").getClass() + " : " + result.get("key_2"))
     System.out.println(result.get("key_3").getClass() + " : " + result.get("key_3"))
-    
-    for (inx <- 0 until 4) {
-      println(inx)
-    }
   }
   
 /*  def convertHashMapToScalaMap(nativeObject: java.util.Map[String, Object]): Map[String, Object] = {
@@ -91,16 +87,16 @@ object NativeObjectToScalaMap {
   
   def convertArrayListToScalaList(nativeArray: java.util.List[Object]): List[Object] = {
     var sl: List[Object] = List()
-    var nativeArraySize: Int = nativeArray.size();
+    val nativeArraySize: Int = nativeArray.size();
     
     for (inx <- 0 until nativeArraySize) {
       var element: Object = nativeArray.get(inx)
       if(element.isInstanceOf[HashMap[String, Object]]) {
-        sl :+ convertHashMapToScalaMap(element.asInstanceOf[java.util.Map[String, Object]])
+        sl :+= convertHashMapToScalaMap(element.asInstanceOf[java.util.Map[String, Object]])
       } else if (element.isInstanceOf[ArrayList[Object]]) {
-        sl :+ convertArrayListToScalaList(element.asInstanceOf[java.util.List[Object]])
+        sl :+= convertArrayListToScalaList(element.asInstanceOf[java.util.List[Object]])
       } else {
-        sl :+ nativeArray.get(inx)
+        sl :+= nativeArray.get(inx).asInstanceOf[String]
       }
     }
     return sl

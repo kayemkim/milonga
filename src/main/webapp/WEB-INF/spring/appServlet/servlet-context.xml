@@ -16,12 +16,6 @@
 	<resources mapping="/resources/**" location="/resources/" />
 	
 	<!-- Scalate View Resolver -->
-	<!-- <beans:bean class="org.fusesource.scalate.spring.view.ScalateViewResolver">
-		<beans:property name="order" value="1" />
-		<beans:property name="prefix" value="/WEB-INF/views/scalate/" />
-		<beans:property name="suffix" value=".ssp" />
-	</beans:bean> -->
-	
 	<beans:bean class="com.km.milonga.template.AtmosScalateViewResolver">
 		<beans:property name="order" value="1" />
 		<beans:property name="prefix" value="/WEB-INF/views/scalate/" />

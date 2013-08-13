@@ -1,0 +1,13 @@
+<%@ val login: String = "default" %>
+<%@ val result: String = "default" %>
+<html>
+<head>
+</head>
+<body>
+<h1>
+	${login}
+</h1>
+
+<P> Login is ${result}! </P>
+</body>
+</html>

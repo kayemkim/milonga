@@ -14,6 +14,7 @@ import _root_.org.springframework.web.servlet.view.{ AbstractView, AbstractTempl
 import _root_.org.slf4j.LoggerFactory
 import org.fusesource.scalate.util.ResourceNotFoundException
 import com.km.milonga.scala.NativeObjectToScalaMap
+import com.km.milonga.bean.User
 
 trait ScalateRenderStrategy {
   protected val log = LoggerFactory.getLogger(getClass)
@@ -63,10 +64,18 @@ class ScalateUrlView extends AbstractTemplateView with AbstractScalateView
     val context = new ServletRenderContext(templateEngine, request, response, getServletContext)
     RenderContext.using(context) {
       // working now ...
-      /*var dataMap: Map[String, Any] = Map()
+      var dataMap: Map[String, Object] = Map()
       dataMap = NativeObjectToScalaMap.convertHashMapToScalaMap(model.asInstanceOf[java.util.Map[String, Object]])
-      render(context, dataMap)*/
-      render(context, model.asInstanceOf[java.util.Map[String, Any]].toMap)
+      render(context, dataMap)
+      
+      /*var user: User = new User
+      user.setAge(33)
+      user.setName("K.M. Kim")
+      model.put("km", user)
+      val nums: List[Int] = List(1, 2, 3, 4)
+      model.put("nums", nums)
+      
+      render(context, model.asInstanceOf[java.util.Map[String, Any]].toMap)*/
     }
   }
 

@@ -1,12 +1,14 @@
 <%@ val platform: String %>
-<%@ val developer: org.mozilla.javascript.NativeObject %>
+<%@ val developer: Atmos.Json %>
 
-<%@ val mapmap: java.util.Map[String, Object] %>
-
-<% val m2: Map[String, Any] = mapmap.toMap %>
-<% System.out.println("mixed"); %>
-
-${platform}
 ${platform}
 ${developer.get("name")}
-${m2.get("sub")}
+${developer.get("company").get("companyName")}
+${developer.get("age")}
+
+<!-- working now : below is shit -->
+<p>
+#for (x <- 0 until developer.get("family").size)
+  <li>(${developer.get("family").get(x)})</li>
+#end
+</p>
