@@ -1,25 +1,14 @@
 <%@ val platform: String %>
-<%@ val developer: Map[String, Any] %>
-<%@ val users: List[Object] %>
+<%@ val developer: Atmos.Json %>
 
 ${platform}
 ${developer.get("name")}
-${developer("company").asInstanceOf[Map[String, _]].get("companyName")}
+${developer.get("company").get("companyName")}
 ${developer.get("age")}
-${developer.get("family").isInstanceOf[List[Object]]}
 
+<!-- working now : below is shit -->
 <p>
-#for (x <- users)
-	<li>${x}</li>
+#for (x <- 0 until developer.get("family").size)
+  <li>(${developer.get("family").get(x)})</li>
 #end
 </p>
-${users.size}
-
-<%@ val id: Int = 123 %>
-<% import scala.map.Cheese._ %>
-#do(foo(id))
-product ${id}
-#end
-
-<%@ val it: Map[String, Any] %>
-${it.get("platform")}

@@ -5,7 +5,8 @@
 </head>
 <body>
 <h1>
-	Platform is ${platform}.  
+	Platform is ${platform}.
+	Developer is ${developer.family[0]}
 </h1>
 
 <P> Test is successful! </P>

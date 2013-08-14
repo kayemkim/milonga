@@ -64,9 +64,9 @@ class ScalateUrlView extends AbstractTemplateView with AbstractScalateView
     val context = new ServletRenderContext(templateEngine, request, response, getServletContext)
     RenderContext.using(context) {
       // working now ...
-      var dataMap: Map[String, Object] = Map()
+      /*var dataMap: Map[String, Object] = Map()
       dataMap = NativeObjectToScalaMap.convertHashMapToScalaMap(model.asInstanceOf[java.util.Map[String, Object]])
-      render(context, dataMap)
+      render(context, dataMap)*/
       
       /*var user: User = new User
       user.setAge(33)
@@ -74,8 +74,9 @@ class ScalateUrlView extends AbstractTemplateView with AbstractScalateView
       model.put("km", user)
       val nums: List[Int] = List(1, 2, 3, 4)
       model.put("nums", nums)
+      */
       
-      render(context, model.asInstanceOf[java.util.Map[String, Any]].toMap)*/
+      render(context, model.asInstanceOf[java.util.Map[String, Any]].toMap)
     }
   }
 

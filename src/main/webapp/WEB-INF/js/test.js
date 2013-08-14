@@ -8,6 +8,7 @@ Atmos.define('/login', function(request, response) {
 	} else {
 		request.setAttribute("result", "successful");
 	}
+	response.setCookie("userId", request.getParameter("login"));
 	var user = new Object();
 	user.login = request.getParameter("login");
 	user.result = request.getAttribute("result");

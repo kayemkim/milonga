@@ -37,7 +37,6 @@ public class MapConversionTest {
 		list2.add("def");
 		childMap.put("child_2", list2);
 		map.put("key_3", childMap);
-		// ¡ÿ∫Ò ≥°
 		
 		ConcurrentHashMap<String, Object> result = convertHashMapToConcurrentHashMap(map);
 		assertEquals("value_1", result.get("key_1"));
