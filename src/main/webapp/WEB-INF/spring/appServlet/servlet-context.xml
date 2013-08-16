@@ -19,7 +19,9 @@
 	<beans:bean class="com.km.milonga.template.AtmosScalateViewResolver">
 		<beans:property name="order" value="1" />
 		<beans:property name="prefix" value="/WEB-INF/views/scalate/" />
-		<beans:property name="suffix" value=".ssp" />
+		<!-- <beans:property name="suffix" value=".jade" /> -->
+		<!-- <beans:property name="suffix" value=".ssp" /> -->
+		<beans:property name="suffix" value=".mustache" />
 	</beans:bean>
 
 	
