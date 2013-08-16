@@ -5,7 +5,16 @@ function Atmos() {
 Atmos.prototype = {
 	define: function(url, handler) {
 		mappingInfo.put(url, handler);
+	},
+	
+	route: function(url) {
+		return new Route(url);
+	},
+	
+	url: function(url) {
+		return new Route(url);
 	}
+
 };
 
 var Atmos = new Atmos();

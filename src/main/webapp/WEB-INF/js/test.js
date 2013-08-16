@@ -16,7 +16,7 @@ Atmos.define('/login', function(request, response) {
 	
 });
 
-route('/platform').define(function(request, response) {
+Atmos.url('/platform').define(function(request, response) {
 	return {
 				"platform" : "Atmos Code",
 				"developer" : {
@@ -31,11 +31,11 @@ route('/platform').define(function(request, response) {
 			}; 
 });
 
-route('/library').response({"library" : "rhino"});
+Atmos.url('/library').response({"library" : "rhino"});
 
-route('/create_response').response(new Response("Hello Response!"));
+Atmos.url('/create_response').response(new Response("Hello Response!"));
 
-route('/add_cookie').define(function(request) {
+Atmos.url('/add_cookie').define(function(request) {
 	var response = new Response();
 	response.cookie.userId = "metsmania";
 	var message = "User ID : " +response.cookie.userId;

@@ -55,7 +55,7 @@ public class AtmosControllerHandler {
 			Enumeration<String> attributeNames = request.getAttributeNames();
 			while (attributeNames.hasMoreElements()) {
 				String attributeName = attributeNames.nextElement();
-				//mv.addObject(attributeName, request.getAttribute(attributeName));
+				mv.addObject(attributeName, request.getAttribute(attributeName));
 			}
 		} else if (result instanceof NativeObject) {
 			Iterator<Entry<Object, Object>> i = ((NativeObject) result).entrySet().iterator();
