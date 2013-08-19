@@ -15,19 +15,33 @@
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
 	
+	<beans:bean id="rythmConfigurator" class="com.ctlok.springframework.web.servlet.view.rythm.RythmConfigurator">
+    	<!-- <beans:property name="mode" value="dev" /> -->
+    	<beans:property name="rootDirectory" value="/WEB-INF/views/rythm/" />
+	</beans:bean>
+	
+	<beans:bean id="rythmViewResolver" class="com.ctlok.springframework.web.servlet.view.rythm.RythmViewResolver">
+		<beans:property name="order" value="3" />
+    	<beans:constructor-arg>
+        	<beans:ref bean="rythmConfigurator" />
+    	</beans:constructor-arg>
+    	<beans:property name="prefix" value="/WEB-INF/views/rythm/" />
+    	<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
 	<!-- Scalate View Resolver -->
 	<beans:bean class="com.km.milonga.template.AtmosScalateViewResolver">
-		<beans:property name="order" value="1" />
+		<beans:property name="order" value="2" />
 		<beans:property name="prefix" value="/WEB-INF/views/scalate/" />
-		<!-- <beans:property name="suffix" value=".jade" /> -->
-		<!-- <beans:property name="suffix" value=".ssp" /> -->
+		<!-- <beans:property name="suffix" value=".jade" />
+		<beans:property name="suffix" value=".ssp" /> -->
 		<beans:property name="suffix" value=".mustache" />
 	</beans:bean>
 
 	
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<beans:property name="order" value="2" />
+		<beans:property name="order" value="1" />
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
