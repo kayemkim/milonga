@@ -13,7 +13,7 @@
 	<div id="header">
 	    <div id="picture">
             <h1>In The Clouds</h1>
-            <h2>${userId}</h2>
+            <h2>${sessionScope["userId"]}</h2>
         </div>
     </div>
     <div id="main">

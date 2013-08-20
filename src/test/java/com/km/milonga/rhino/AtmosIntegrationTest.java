@@ -5,6 +5,8 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.c
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.request;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.view;
 
@@ -63,6 +65,15 @@ public class AtmosIntegrationTest {
 		
 		mockMvc.perform(get("/add_cookie")).andExpect(status().isOk())
 				.andExpect(cookie().value("userId", "metsmania"));
+	}
+	
+	@Test
+	public void sessionAndRedirectTest() throws Exception {
+		mockMvc.perform(
+				get("/login").param("userId", "abc@sk.com").param("password","1111"))
+				.andExpect(status().isOk())
+				.andExpect(request().sessionAttribute("userId", "abc@sk.com"))
+				.andExpect(redirectedUrl("/blog?result=succeeded"));
 	}
 
 }

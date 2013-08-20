@@ -5,7 +5,7 @@ Atmos.define('/login', function(request, response) {
 	var password = request.getParameter("password");
 	
 	var loginResult = new Object();
-	loginResult.userId = userId;
+	//loginResult.userId = userId;
 	
 	if (userId == 'abc@sk.com') {
 		if (password != '1111') {
@@ -18,7 +18,8 @@ Atmos.define('/login', function(request, response) {
 		loginResult.result = "not available";
 	}
 	
-	response.setCookie("userId", userId);
+	response.setCookie("mail", userId);
+	request.getSession().setAttribute("userId", userId);
 	
 	return loginResult;
 });

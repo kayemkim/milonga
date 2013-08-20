@@ -15,7 +15,6 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Undefined;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -55,6 +54,7 @@ public class AtmosControllerHandler {
 			Enumeration<String> attributeNames = request.getAttributeNames();
 			while (attributeNames.hasMoreElements()) {
 				String attributeName = attributeNames.nextElement();
+				System.out.println(attributeName);
 				mv.addObject(attributeName, request.getAttribute(attributeName));
 			}
 		} else if (result instanceof NativeObject) {
@@ -67,7 +67,7 @@ public class AtmosControllerHandler {
 		}
 		
 		if (atmosResponse.getRedirect() != null) {
-			mv.setViewName(atmosResponse.getRedirect());
+			mv.setViewName("redirect:" + atmosResponse.getRedirect());
 		}
 		
 		return mv;
