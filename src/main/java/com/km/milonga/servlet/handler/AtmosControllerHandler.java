@@ -66,6 +66,10 @@ public class AtmosControllerHandler {
 			}
 		}
 		
+		if (atmosResponse.getRedirect() != null) {
+			mv.setViewName(atmosResponse.getRedirect());
+		}
+		
 		return mv;
 	}
 	

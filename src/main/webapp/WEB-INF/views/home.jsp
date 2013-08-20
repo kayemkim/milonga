@@ -17,7 +17,7 @@
   <form method="post" action="/milonga/login" class="login">
     <p>
       <label for="login">Email:</label>
-      <input type="text" name="login" id="login" value="">
+      <input type="text" name="userId" id="userId" value="">
     </p>
 
     <p>
