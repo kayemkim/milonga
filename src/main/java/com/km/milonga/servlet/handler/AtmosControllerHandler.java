@@ -18,7 +18,8 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.km.milonga.servlet.AtmosResponse;
+import com.km.milonga.servlet.AtmosHttpServletRequest;
+import com.km.milonga.servlet.AtmosHttpServletResponse;
 
 /**
  * Atmos Function is converted to this controller to be used like Spring
@@ -42,20 +43,20 @@ public class AtmosControllerHandler {
 		Context context = Context.enter();
 		Scriptable scope = context.initStandardObjects();
 		
-		AtmosResponse atmosResponse = new AtmosResponse();
+		AtmosHttpServletResponse atmosResponse = new AtmosHttpServletResponse(response);
+		AtmosHttpServletRequest atmosRequest = new AtmosHttpServletRequest(request);
 		
 		Object result = atmosFunction.call(context, scope, scope, new Object[] {
-				request, atmosResponse });
+				atmosRequest, atmosResponse });
 		
 		setCookie(atmosResponse, response);
 		
 		if (result instanceof Undefined) {
 			// request attributes to Model
-			Enumeration<String> attributeNames = request.getAttributeNames();
+			Enumeration<String> attributeNames = atmosRequest.getAttributeNames();
 			while (attributeNames.hasMoreElements()) {
 				String attributeName = attributeNames.nextElement();
-				System.out.println(attributeName);
-				mv.addObject(attributeName, request.getAttribute(attributeName));
+				mv.addObject(attributeName, atmosRequest.getAttribute(attributeName));
 			}
 		} else if (result instanceof NativeObject) {
 			Iterator<Entry<Object, Object>> i = ((NativeObject) result).entrySet().iterator();
@@ -73,7 +74,7 @@ public class AtmosControllerHandler {
 		return mv;
 	}
 	
-	private void setCookie(AtmosResponse atmosResponse, HttpServletResponse response) {
+	private void setCookie(AtmosHttpServletResponse atmosResponse, HttpServletResponse response) {
 		Map<String, String> cookieMap = atmosResponse.getCookie();
 		if (cookieMap == null) {
 			return;

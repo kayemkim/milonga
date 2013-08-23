@@ -3,8 +3,15 @@ package com.km.milonga.servlet;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AtmosResponse {
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+
+public class AtmosHttpServletResponse extends HttpServletResponseWrapper {
 	
+	public AtmosHttpServletResponse(HttpServletResponse response) {
+		super(response);
+	}
+
 	private Map<String, String> cookie = new HashMap<String, String>();
 	
 	private String redirect;
