@@ -5,7 +5,7 @@
 </head>
 <body>
 <h1>
-	${id}
+	${userId}
 </h1>
 
 <P> Login is ${result}! </P>

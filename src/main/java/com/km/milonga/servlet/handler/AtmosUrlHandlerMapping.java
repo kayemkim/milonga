@@ -20,6 +20,7 @@ import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 import com.km.milonga.rhino.AtmosRequestMappingInfo;
 import com.km.milonga.rhino.debug.RhinoDebuggerFactory;
 import com.km.milonga.servlet.checker.AtmosFunctionChecker;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
@@ -92,7 +93,7 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 			String url = iterator.next().getKey();
 			NativeFunction atmosFunction = (NativeFunction) requestMappingInfo
 					.get(url);
-
+			
 			registerJsFunctionAsHandler(url, atmosFunction);
 		}
 	}
@@ -168,7 +169,6 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 			NativeFunction atmosFunction) {
 
 		try {
-
 			Class<?> handlerTypeClass = functionChecker
 					.checkAndProcess(atmosFunction);
 			Constructor<?> handlerConst = handlerTypeClass

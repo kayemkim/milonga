@@ -17,21 +17,23 @@ public class AtmosHandlerAdapter implements HandlerAdapter {
 
 	@Override
 	public boolean supports(Object handler) {
-		return (handler instanceof AtmosHttpRequestHandler)
-				|| (handler instanceof AtmosControllerHandler);
+		/*return (handler instanceof AtmosHttpRequestHandler)
+				|| (handler instanceof AtmosControllerHandler);*/
+		return handler instanceof AtmosControllerHandler;
 	}
 
 	@Override
 	public ModelAndView handle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-		if (handler instanceof AtmosHttpRequestHandler) {
+		/*if (handler instanceof AtmosHttpRequestHandler) {
 			((AtmosHttpRequestHandler) handler).handleRequest(request, response);
 			return null;
 		}
 		else if (handler instanceof AtmosControllerHandler) {
 			return ((AtmosControllerHandler) handler).handleRequest(request, response);
 		}
-		return null;
+		return null;*/
+		return ((AtmosControllerHandler) handler).handleRequest(request, response);
 	}
 
 	@Override

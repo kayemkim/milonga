@@ -1,0 +1,30 @@
+<html>
+<head>
+</head>
+<body>
+<h1>
+	Platform is {{platform}}.
+	Developer is {{developer.name}}
+</h1>
+
+<P> 
+<ul>
+	<li>Developer
+		<ul>
+			{{#developer}}
+			<li>Name : {{name}}</li>
+			<li>Company : {{company.companyName}}</li>
+			<li>Family
+				<ul>
+					{{#family}}
+					<li>{{.}}</li>
+					{{/family}}
+				</ul>
+			</li>
+			{{/developer}}
+		</ul>
+	</li>
+</ul> 
+</P>
+</body>
+</html>
