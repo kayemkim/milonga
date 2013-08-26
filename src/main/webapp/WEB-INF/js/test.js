@@ -1,5 +1,26 @@
-//var Atmos = require('atmos');
+/*
+ * test view for JSON data
+ */
+Atmos.url('/platform').define(function(request, response) {
+	
+	return {
+				"platform" : "Atmos Code",
+				"developer" : {
+								"name" : "km",
+								"company" : {
+											  "companyName" : "SKP"
+								},
+								"age" : 33,
+								"family" : ["wife", "father", "mother", "brother"]
+				},
+				"users" : ["Tom", "John"]
+			}; 
+});
 
+
+/*
+ * for login action
+ */
 Atmos.define('/login', function(request, response) {
 	var userId = request.getParameter("userId");
 	var password = request.getParameter("password");
@@ -28,14 +49,9 @@ Atmos.define('/login', function(request, response) {
 });
 
 
-
-Atmos.define('/rest/{foo}', function(request, response) {
-	print('rest');
-	print(foo);
-});
-
-
-
+/*
+ * blog list view
+ */
 Atmos.define('/blog', function(request, response) {
 	var result = new Object();
 	
@@ -47,25 +63,6 @@ Atmos.define('/blog', function(request, response) {
 	
 	return result;
 });
-
-
-
-Atmos.url('/platform').define(function(request, response) {
-	
-	return {
-				"platform" : "Atmos Code",
-				"developer" : {
-								"name" : "km",
-								"company" : {
-											  "companyName" : "SKP"
-								},
-								"age" : 33,
-								"family" : ["wife", "father", "mother", "brother"]
-				},
-				"users" : ["Tom", "John"]
-			}; 
-});
-
 
 
 //Atmos.url('/library').response({"library" : "rhino"});
