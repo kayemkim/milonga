@@ -5,7 +5,6 @@ Atmos.define('/login', function(request, response) {
 	var password = request.getParameter("password");
 	
 	var loginResult = new Object();
-	//loginResult.userId = userId;
 	
 	if (userId == 'abc@sk.com') {
 		if (password != '1111') {
@@ -52,6 +51,7 @@ Atmos.define('/blog', function(request, response) {
 
 
 Atmos.url('/platform').define(function(request, response) {
+	
 	return {
 				"platform" : "Atmos Code",
 				"developer" : {

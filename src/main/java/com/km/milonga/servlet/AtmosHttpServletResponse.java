@@ -16,6 +16,8 @@ public class AtmosHttpServletResponse extends HttpServletResponseWrapper {
 	
 	private String redirect;
 	
+	private String forward;
+	
 	public void setCookie(String name, String value) {
 		cookie.put(name, value);
 	}
@@ -31,5 +33,12 @@ public class AtmosHttpServletResponse extends HttpServletResponseWrapper {
 	public String getRedirect() {
 		return redirect;
 	}
-
+	
+	public void setForward(String forward) {
+		this.forward = forward;
+	}
+	
+	public String getForward() {
+		return forward;
+	}
 }
