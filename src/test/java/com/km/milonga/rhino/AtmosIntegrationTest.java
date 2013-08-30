@@ -1,12 +1,11 @@
 package com.km.milonga.rhino;
 
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.view;
 
@@ -74,6 +73,15 @@ public class AtmosIntegrationTest {
 				.andExpect(status().isOk())
 				.andExpect(request().sessionAttribute("userId", "abc@sk.com"))
 				.andExpect(redirectedUrl("/blog?result=succeeded"));
+	}
+	
+	
+	@Test
+	public void dataBindingTest() throws Exception {
+		mockMvc.perform(
+				get("/binding").param("playerName", "Wright"))
+				.andExpect(status().isOk())
+				.andExpect(cookie().value("playerName", "Wright"));
 	}
 
 }
