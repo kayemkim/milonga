@@ -1,6 +1,22 @@
+/*
+ * @PathVariable example
+ */
+Atmos.url('/pathvariable/{varName}').define(function(request, response) {
+	var pathVar = request.resolvePathVariable('varName');
+	var result = new Object();
+	result['pathVariable'] = pathVar;
+	return result;
+});
+
+
+/*
+ * Class Object Binding example
+ */
 Atmos.url('/binding').define(function(request, response) {
 	var data = request.bindObject('com.km.milonga.rhino.Player');
-	response.setCookie("playerName", data.getPlayerName());
+	var result = new Object();
+	result['playerName'] = data.getPlayerName();
+	return result;
 });
 
 

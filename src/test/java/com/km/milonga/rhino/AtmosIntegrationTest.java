@@ -76,12 +76,31 @@ public class AtmosIntegrationTest {
 	}
 	
 	
+	/**
+	 * @PathVariable example
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void pathVariableBindingTest() throws Exception {
+		mockMvc.perform(
+				get("/pathvariable/foo"))
+				.andExpect(status().isOk())
+				.andExpect(model().attribute("pathVariable", "foo"));
+	}
+	
+	
+	/**
+	 * Class Object Binding example
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void dataBindingTest() throws Exception {
 		mockMvc.perform(
 				get("/binding").param("playerName", "Wright"))
 				.andExpect(status().isOk())
-				.andExpect(cookie().value("playerName", "Wright"));
+				.andExpect(model().attribute("playerName", "Wright"));
 	}
-
+	
 }

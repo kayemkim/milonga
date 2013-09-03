@@ -18,8 +18,6 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.github.mustachejava.TemplateFunction;
-import com.google.common.base.Function;
 import com.km.milonga.servlet.AtmosHttpServletRequest;
 import com.km.milonga.servlet.AtmosHttpServletResponse;
 
