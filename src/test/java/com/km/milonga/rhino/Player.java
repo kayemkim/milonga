@@ -1,7 +1,13 @@
 package com.km.milonga.rhino;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.annotate.JsonProperty;
+
+@XmlRootElement
 public class Player {
 	
+	@JsonProperty
 	private String playerName;
 
 	public String getPlayerName() {

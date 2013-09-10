@@ -19,7 +19,7 @@ public class AtmosHandlerAdapter implements HandlerAdapter {
 	public boolean supports(Object handler) {
 		/*return (handler instanceof AtmosHttpRequestHandler)
 				|| (handler instanceof AtmosControllerHandler);*/
-		return handler instanceof AtmosControllerHandler;
+		return handler instanceof AtmosFunctionHandler;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class AtmosHandlerAdapter implements HandlerAdapter {
 			return ((AtmosControllerHandler) handler).handleRequest(request, response);
 		}
 		return null;*/
-		return ((AtmosControllerHandler) handler).handleRequest(request, response);
+		return ((AtmosFunctionHandler) handler).handleRequest(request, response);
 	}
 
 	@Override

@@ -20,6 +20,14 @@ Atmos.url('/binding').define(function(request, response) {
 });
 
 
+Atmos.url('/json/{id}').define(function(request, response) {
+	var id = request.resolvePathVariable('id');
+	var player = new com.km.milonga.rhino.Player();
+	player.setPlayerName(id);
+	return player;
+});
+
+
 /*
  * test view for JSON data
  */

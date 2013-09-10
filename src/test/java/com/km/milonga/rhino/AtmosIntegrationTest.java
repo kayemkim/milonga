@@ -1,13 +1,7 @@
 package com.km.milonga.rhino;
 
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.cookie;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.forwardedUrl;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.request;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.server.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.*;
 
 import javax.annotation.Resource;
 
@@ -103,4 +97,13 @@ public class AtmosIntegrationTest {
 				.andExpect(model().attribute("playerName", "Wright"));
 	}
 	
+	
+	@Test
+	public void contentNegotiationForJson() throws Exception {
+		System.out.println();
+		mockMvc.perform(
+				get("/json/foo.json"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("{\"playerName\":\"foo\"}"));
+	}
 }

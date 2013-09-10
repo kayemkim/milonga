@@ -65,6 +65,27 @@ Atmos.define('/blog', function(request, response) {
 });
 
 
+Atmos.url('/user/{id}').define(function(request, response) {
+	var id = request.resolvePathVariable('id');
+	
+	var result = new Object();
+	result.id = id;
+	
+	return result;
+});
+
+
+Atmos.url('/blog/{id}').define(function(request, response) {
+	var id = request.resolvePathVariable('id');
+	
+	var blog = new com.km.milonga.externals.blog.model.Blog();
+	blog.setId(id);
+	blog.setTitle("This is " + id + "'s blog.");
+	
+	return blog;
+});
+
+
 //Atmos.url('/library').response({"library" : "rhino"});
 //
 //

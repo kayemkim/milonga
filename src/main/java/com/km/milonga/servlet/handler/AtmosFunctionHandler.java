@@ -11,8 +11,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
@@ -22,20 +24,31 @@ import com.km.milonga.servlet.AtmosHttpServletRequest;
 import com.km.milonga.servlet.AtmosHttpServletResponse;
 
 /**
- * Atmos Function is converted to this controller to be used like Spring
- * Controller. This controller handles Spring Model and View.
+ * Atmos Function is converted to this handler to be used as Spring
+ * handler. This handler handles Spring Model and View.
  * 
  * @author kminkim
  * 
  */
-public class AtmosControllerHandler {
+public class AtmosFunctionHandler {
 	
 	private NativeFunction atmosFunction;
 	
-	public AtmosControllerHandler(NativeFunction atmosHandler) {
-		this.atmosFunction = atmosHandler;
+	public AtmosFunctionHandler(NativeFunction atmosFunction) {
+		this.atmosFunction = atmosFunction;
 	}
 	
+	
+	/**
+	 * Handler method
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	@SuppressWarnings("unchecked")
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		ModelAndView mv = new ModelAndView();
@@ -59,12 +72,18 @@ public class AtmosControllerHandler {
 				mv.addObject(attributeName, atmosRequest.getAttribute(attributeName));
 			}
 		} else if (result instanceof NativeObject) {
+			// in case that return type is Javascript object
 			Iterator<Entry<Object, Object>> i = ((NativeObject) result).entrySet().iterator();
 			while(i.hasNext()) {
 				Entry<Object, Object> e = i.next();
 				String key = e.getKey().toString();
-				mv.addObject(e.getKey().toString(), e.getValue());
+				mv.addObject(key, e.getValue());
 			}
+		} else if (result instanceof NativeJavaObject) {
+			// in case that return type is Java object
+			ObjectMapper om = new ObjectMapper();
+			Map<String, Object> convertedResult = om.convertValue(((NativeJavaObject) result).unwrap(), Map.class);
+			mv.getModelMap().mergeAttributes(convertedResult);
 		}
 		
 		if (atmosResponse.getRedirect() != null) {
@@ -77,6 +96,7 @@ public class AtmosControllerHandler {
 		
 		return mv;
 	}
+	
 	
 	private void setCookie(AtmosHttpServletResponse atmosResponse, HttpServletResponse response) {
 		Map<String, String> cookieMap = atmosResponse.getCookie();
