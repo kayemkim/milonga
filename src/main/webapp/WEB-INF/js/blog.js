@@ -82,7 +82,11 @@ Atmos.url('/blog/{id}').define(function(request, response) {
 	blog.setId(id);
 	blog.setTitle("This is " + id + "'s blog.");
 	
-	return blog;
+	var result = new Object();
+	result.blog = blog;
+	
+	//return blog;
+	return result;
 });
 
 

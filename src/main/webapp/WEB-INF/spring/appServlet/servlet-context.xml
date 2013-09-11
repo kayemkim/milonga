@@ -106,6 +106,27 @@
 		<beans:property name="defaultViews">
 			<beans:list>
 				<beans:bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+				<beans:bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+					<beans:constructor-arg>
+						<beans:bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+							<beans:property name="classesToBeBound">
+								<beans:list>
+									<beans:value>com.km.milonga.externals.blog.model.Blog</beans:value>
+								</beans:list>
+							</beans:property>
+						</beans:bean>
+					</beans:constructor-arg>
+					<!-- <beans:property name="marshaller">
+						<beans:bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+							<beans:property name="autodetectAnnotations" value="true" />
+							<beans:property name="supportedClasses">
+								<beans:list>
+									<beans:value>com.km.milonga.externals.blog.model.Blog</beans:value>
+								</beans:list>
+							</beans:property>
+						</beans:bean>
+					</beans:property> -->
+				</beans:bean>
 			</beans:list>
 		</beans:property>
 		<beans:property name="ignoreAcceptHeader" value="true" />
