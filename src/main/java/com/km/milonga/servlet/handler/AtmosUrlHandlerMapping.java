@@ -4,9 +4,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
@@ -17,17 +23,16 @@ import org.springframework.beans.BeansException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 
-import com.km.milonga.rhino.AtmosRequestMappingInfo;
+import com.km.milonga.rhino.AtmosRequestMappingInfoStorage;
 import com.km.milonga.rhino.debug.RhinoDebuggerFactory;
 import com.km.milonga.servlet.checker.AtmosFunctionChecker;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
 	/*
 	 * storage of url-handler mapping infos
 	 */
-	private AtmosRequestMappingInfo requestMappingInfo;
+	private AtmosRequestMappingInfoStorage requestMappingInfo;
 
 	/*
 	 * Atmos library file location.
@@ -47,7 +52,7 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	/**
 	 * Setter of requestMappingInfo
 	 */
-	public void setRequestMappingInfo(AtmosRequestMappingInfo requestMappingInfo) {
+	public void setRequestMappingInfo(AtmosRequestMappingInfoStorage requestMappingInfo) {
 		this.requestMappingInfo = requestMappingInfo;
 	}
 
@@ -93,7 +98,7 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 			String url = iterator.next().getKey();
 			NativeFunction atmosFunction = (NativeFunction) requestMappingInfo
 					.get(url);
-			
+			//url = url + ".*";
 			registerJsFunctionAsHandler(url, atmosFunction);
 		}
 	}
@@ -139,9 +144,9 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 					if (jsFile.isFile()) {
 						FileReader reader = new FileReader(jsFile);
 
-						AtmosRequestMappingInfo armi = WebApplicationContextUtils
+						AtmosRequestMappingInfoStorage armi = WebApplicationContextUtils
 								.getWebApplicationContext(getServletContext())
-								.getBean(AtmosRequestMappingInfo.class);
+								.getBean(AtmosRequestMappingInfoStorage.class);
 						global.defineProperty("mappingInfo", armi, 0);
 
 						cx.evaluateReader(global, reader, fileName, 1, null);
@@ -175,11 +180,112 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 					.getConstructor(NativeFunction.class);
 			Object handler = handlerConst.newInstance(atmosFunction);
 			registerHandler(url, handler);
+			
+			
+			/*String[] patterns = {url};
+			boolean useSuffixPatternMatch = true;
+			boolean useTrailingSlashMatch = true;
+			List<String> fileExtensions = new ArrayList<String>();
+			fileExtensions.add("json");
+			
+			
+			RequestMappingInfo rmi = new RequestMappingInfo(
+					new PatternsRequestCondition(patterns, getUrlPathHelper(), getPathMatcher(),
+							useSuffixPatternMatch, useTrailingSlashMatch, fileExtensions),
+					new RequestMethodsRequestCondition(RequestMethod.GET),
+					new ParamsRequestCondition(null),
+					new HeadersRequestCondition(null),
+					new ConsumesRequestCondition(null, null),
+					new ProducesRequestCondition(null, null, new ContentNegotiationManager()),
+					null);
+			
+			registerHandler(url, rmi);*/
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}	
+	
+	
+	/**
+	 * Look up a handler instance for the given URL path.
+	 * <p>Supports direct matches, e.g. a registered "/test" matches "/test",
+	 * and various Ant-style pattern matches, e.g. a registered "/t*" matches
+	 * both "/test" and "/team". For details, see the AntPathMatcher class.
+	 * <p>Looks for the most exact pattern, where most exact is defined as
+	 * the longest path pattern.
+	 * @param urlPath URL the bean is mapped to
+	 * @param request current HTTP request (to expose the path within the mapping to)
+	 * @return the associated handler instance, or {@code null} if not found
+	 * @see #exposePathWithinMapping
+	 * @see org.springframework.util.AntPathMatcher
+	 */
+	@Override
+	protected Object lookupHandler(String urlPath, HttpServletRequest request) throws Exception {
+		// Direct match?
+		Object handler = getHandlerMap().get(urlPath);
+		if (handler != null) {
+			// Bean name or resolved handler?
+			if (handler instanceof String) {
+				String handlerName = (String) handler;
+				handler = getApplicationContext().getBean(handlerName);
+			}
+			validateHandler(handler, request);
+			return buildPathExposingHandler(handler, urlPath, urlPath, null);
+		}
+		// Pattern match?
+		List<String> matchingPatterns = new ArrayList<String>();
+		for (String registeredPattern : getHandlerMap().keySet()) {
+			if (getPathMatcher().match(registeredPattern, urlPath)) {
+				matchingPatterns.add(registeredPattern);
+			}
+		}
+		String bestPatternMatch = null;
+		Comparator<String> patternComparator = getPathMatcher().getPatternComparator(urlPath);
+		if (!matchingPatterns.isEmpty()) {
+			Collections.sort(matchingPatterns, patternComparator);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Matching patterns for request [" + urlPath + "] are " + matchingPatterns);
+			}
+			bestPatternMatch = matchingPatterns.get(0);
+		}
+		if (bestPatternMatch != null) {
+			handler = getHandlerMap().get(bestPatternMatch);
+			// Bean name or resolved handler?
+			if (handler instanceof String) {
+				String handlerName = (String) handler;
+				handler = getApplicationContext().getBean(handlerName);
+			}
+			validateHandler(handler, request);
+			String pathWithinMapping = getPathMatcher().extractPathWithinPattern(bestPatternMatch, urlPath);
 
+			// There might be multiple 'best patterns', let's make sure we have the correct URI template variables
+			// for all of them
+			Map<String, String> uriTemplateVariables = new LinkedHashMap<String, String>();
+			for (String matchingPattern : matchingPatterns) {
+				if (patternComparator.compare(bestPatternMatch, matchingPattern) == 0) {
+					
+					boolean hasSuffix = bestPatternMatch.indexOf('.') != -1;
+					if (!hasSuffix && getPathMatcher().match(bestPatternMatch + ".*", urlPath)) {
+						matchingPattern += ".*";
+					}
+					
+					//Map<String, String> vars = getPathMatcher().extractUriTemplateVariables(matchingPattern, urlPath);
+					Map<String, String> vars = getPathMatcher().extractUriTemplateVariables(matchingPattern, urlPath);
+					Map<String, String> decodedVars = getUrlPathHelper().decodePathVariables(request, vars);
+					uriTemplateVariables.putAll(decodedVars);
+				}
+			}
+			if (logger.isDebugEnabled()) {
+				logger.debug("URI Template variables for request [" + urlPath + "] are " + uriTemplateVariables);
+			}
+			return buildPathExposingHandler(handler, bestPatternMatch, pathWithinMapping, uriTemplateVariables);
+		}
+		// No handler found...
+		return null;
+	}
+	
+	
+	
 }

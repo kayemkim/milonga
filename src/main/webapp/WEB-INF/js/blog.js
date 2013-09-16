@@ -21,7 +21,7 @@ Atmos.url('/platform').define(function(request, response) {
 /*
  * for login action
  */
-Atmos.define('/login', function(request, response) {
+Atmos.defineView('/login', function(request, response) {
 	var userId = request.getParameter("userId");
 	var password = request.getParameter("password");
 	
@@ -52,7 +52,7 @@ Atmos.define('/login', function(request, response) {
 /*
  * blog list view
  */
-Atmos.define('/blog', function(request, response) {
+Atmos.defineView('/blog', function(request, response) {
 	var result = new Object();
 	
 	var blog1 = {"title" : "Template Usage", "content" : "This is test blog #1."};
@@ -62,6 +62,36 @@ Atmos.define('/blog', function(request, response) {
 	result.bloggs = [blog1, blog2, blog3];
 	
 	return result;
+});
+
+
+Atmos.url('/user/{id}').define(function(request, response) {
+	var id = request.resolvePathVariable('id');
+	
+	var result = new Object();
+	result.id = id;
+	
+	return result;
+});
+
+
+Atmos.url('/blog/{id}').define(function(request, response) {
+	var id = request.resolvePathVariable('id');
+	
+	var blog = new com.km.milonga.externals.blog.model.Blog();
+	blog.setId(id);
+	blog.setTitle("This is " + id + "'s blog.");
+	
+	var result = new Object();
+	result.blog = blog;
+	
+	return blog;
+	//return result;
+});
+
+
+Atmos.url('/end').define(function(request, response) {
+	return 'the end.';
 });
 
 

@@ -13,6 +13,10 @@ Atmos.prototype = {
 	
 	url: function(url) {
 		return new Route(url);
+	},
+	
+	defineView: function(url, handler) {
+		mappingInfo.putHandlerForView(url, handler);
 	}
 
 };
@@ -79,6 +83,9 @@ Route.prototype = {
 	},
 	define: function(process) {
 		Atmos.define(this.url, process);
+	},
+	defineView: function(process) {
+		Atmos.defineView(this.url, process);
 	}
 	
 };

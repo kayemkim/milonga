@@ -3,7 +3,7 @@ package com.km.milonga.servlet.checker;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.debug.DebuggableScript;
 
-import com.km.milonga.servlet.handler.AtmosControllerHandler;
+import com.km.milonga.servlet.handler.AtmosFunctionHandler;
 
 public class AtmosControllerHandlerValidator extends
 		FunctionArgumentConditionValidator {
@@ -18,7 +18,7 @@ public class AtmosControllerHandlerValidator extends
 
 	@Override
 	public Class<?> getHandlerType() {
-		return AtmosControllerHandler.class;
+		return AtmosFunctionHandler.class;
 	}
 
 }
