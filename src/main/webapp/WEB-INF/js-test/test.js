@@ -1,7 +1,7 @@
 /*
  * @PathVariable example
  */
-Atmos.url('/pathvariable/{varName}').define(function(request, response) {
+Atmos.url('/pathvariable/{varName}').defineView(function(request, response) {
 	var pathVar = request.resolvePathVariable('varName');
 	var result = new Object();
 	result['pathVariable'] = pathVar;
@@ -12,7 +12,7 @@ Atmos.url('/pathvariable/{varName}').define(function(request, response) {
 /*
  * Class Object Binding example
  */
-Atmos.url('/binding').define(function(request, response) {
+Atmos.url('/binding').defineView(function(request, response) {
 	var data = request.bindObject('com.km.milonga.rhino.Player');
 	var result = new Object();
 	result['playerName'] = data.getPlayerName();
@@ -31,7 +31,7 @@ Atmos.url('/json/{id}').define(function(request, response) {
 /*
  * test view for JSON data
  */
-Atmos.url('/platform').define(function(request, response) {
+Atmos.url('/platform').defineView(function(request, response) {
 	
 	return {
 				"platform" : "Atmos Code",
@@ -51,7 +51,7 @@ Atmos.url('/platform').define(function(request, response) {
 /*
  * for login action
  */
-Atmos.define('/login', function(request, response) {
+Atmos.defineView('/login', function(request, response) {
 	var userId = request.getParameter("userId");
 	var password = request.getParameter("password");
 	

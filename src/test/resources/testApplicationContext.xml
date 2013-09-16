@@ -16,7 +16,7 @@
 	<resources mapping="/resources/**" location="/resources/" />
 	
 	<!-- For content negotiation -->
-	<beans:bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+	<!-- <beans:bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 		<beans:property name="order" value="1" />
 		<beans:property name="mediaTypes">
 			<beans:map>
@@ -29,20 +29,25 @@
 			</beans:list>
 		</beans:property>
 		<beans:property name="ignoreAcceptHeader" value="true" />
-	</beans:bean>
+	</beans:bean> -->
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<beans:property name="order" value="2" />
+		<beans:property name="order" value="1" />
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<beans:bean class="com.km.milonga.servlet.handler.AtmosUrlHandlerMapping">
+	<!-- <beans:bean class="com.km.milonga.servlet.handler.AtmosUrlHandlerMapping">
 		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfo" />
 		<beans:property name="atmosLibraryLocation" value="WEB-INF/js/atmos" />
 		<beans:property name="userSourceLocation" value="WEB-INF/js-test" />
 		<beans:property name="functionChecker" ref="atmosFunctionChecker"/>
+	</beans:bean> -->
+	<beans:bean class="com.km.milonga.servlet.handler.AtmosRequestMappingHandlerMapping">
+		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfoStorage" />
+		<beans:property name="atmosLibraryLocation" value="WEB-INF/js/atmos" />
+		<beans:property name="userSourceLocation" value="WEB-INF/js-test" />
 	</beans:bean>
 	
 	<beans:bean id="atmosFunctionChecker" class="com.km.milonga.servlet.checker.AtmosFunctionChecker">
@@ -55,9 +60,9 @@
 	</beans:bean>
 	
 	<!-- HandlerAdapter for handling simple request and response -->
-	<beans:bean class="com.km.milonga.servlet.handler.AtmosHandlerAdapter" />
+	<!-- <beans:bean class="com.km.milonga.servlet.handler.AtmosHandlerAdapter" /> -->
 	
-	<beans:bean id="atmosRequestMappingInfo" class="com.km.milonga.rhino.AtmosRequestMappingInfo"/>
+	<beans:bean id="atmosRequestMappingInfoStorage" class="com.km.milonga.rhino.AtmosRequestMappingInfoStorage"/>
 	
 	<context:component-scan base-package="com.km.milonga" />
 	

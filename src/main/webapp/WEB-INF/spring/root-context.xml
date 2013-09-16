@@ -14,5 +14,5 @@
 		</property>
 	</bean>
 	
-	<bean id="atmosRequestMappingInfo" class="com.km.milonga.rhino.AtmosRequestMappingInfo"/>
+	<bean id="atmosRequestMappingInfoStorage" class="com.km.milonga.rhino.AtmosRequestMappingInfoStorage"/>
 </beans>

@@ -18,6 +18,7 @@ import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.km.milonga.servlet.AtmosHttpServletRequest;
@@ -32,15 +33,21 @@ import com.km.milonga.servlet.AtmosHttpServletResponse;
  */
 public class AtmosFunctionHandler {
 	
+	public static final String RETURN_RESPONSE_BODY_METHOD = "handleResponseBody";
+	public static final String RETURN_MODEL_AND_VIEW_METHOD = "handleModelAndView";
+	
 	private NativeFunction atmosFunction;
+	
+	private String redirectPath = null;
+	private String forwardPath = null;
+	
 	
 	public AtmosFunctionHandler(NativeFunction atmosFunction) {
 		this.atmosFunction = atmosFunction;
 	}
 	
-	
 	/**
-	 * Handler method
+	 * Handler method for ModelAndView
 	 * 
 	 * @param request
 	 * @param response
@@ -49,27 +56,19 @@ public class AtmosFunctionHandler {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	public ModelAndView handleRequest(HttpServletRequest request,
+	public Object handleModelAndView(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		
+		Object result = callNativeFunction(request, response);
+		
 		ModelAndView mv = new ModelAndView();
-		
-		Context context = Context.enter();
-		Scriptable scope = context.initStandardObjects();
-		
-		AtmosHttpServletResponse atmosResponse = new AtmosHttpServletResponse(response);
-		AtmosHttpServletRequest atmosRequest = new AtmosHttpServletRequest(request);
-		
-		Object result = atmosFunction.call(context, scope, scope, new Object[] {
-				atmosRequest, atmosResponse });
-		
-		setCookie(atmosResponse, response);
 		
 		if (result instanceof Undefined) {
 			// request attributes to Model
-			Enumeration<String> attributeNames = atmosRequest.getAttributeNames();
+			Enumeration<String> attributeNames = request.getAttributeNames();
 			while (attributeNames.hasMoreElements()) {
 				String attributeName = attributeNames.nextElement();
-				mv.addObject(attributeName, atmosRequest.getAttribute(attributeName));
+				mv.addObject(attributeName, request.getAttribute(attributeName));
 			}
 		} else if (result instanceof NativeObject) {
 			// in case that return type is Javascript object
@@ -86,15 +85,63 @@ public class AtmosFunctionHandler {
 			mv.getModelMap().mergeAttributes(convertedResult);
 		}
 		
-		if (atmosResponse.getRedirect() != null) {
-			mv.setViewName("redirect:" + atmosResponse.getRedirect());
+		if (redirectPath != null) {
+			mv.setViewName("redirect:" + redirectPath);
 		}
 		
-		if (atmosResponse.getForward() != null) {
-			mv.setViewName("forward:" + atmosResponse.getForward());
+		if (forwardPath != null) {
+			mv.setViewName("forward:" + forwardPath);
 		}
 		
 		return mv;
+	}
+	
+	/**
+	 * Handler method for ResponseBody
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	@ResponseBody
+	public Object handleResponseBody(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		
+		Object result = callNativeFunction(request, response);
+		
+		if (result instanceof NativeJavaObject) {
+			return ((NativeJavaObject) result).unwrap();
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Call Javascript Native Function
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	private Object callNativeFunction(HttpServletRequest request, HttpServletResponse response) {
+		Context context = Context.enter();
+		Scriptable scope = context.initStandardObjects();
+		
+		AtmosHttpServletRequest atmosRequest = new AtmosHttpServletRequest(request);
+		AtmosHttpServletResponse atmosResponse = new AtmosHttpServletResponse(response);
+		
+		
+		Object result = atmosFunction.call(context, scope, scope, new Object[] {
+				atmosRequest, atmosResponse });
+		
+		setCookie(atmosResponse, response);
+		
+		redirectPath = atmosResponse.getRedirect();
+		forwardPath = atmosResponse.getForward();
+		
+		return result;
 	}
 	
 	

@@ -11,9 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author kminkim
  * 
  */
-public class AtmosRequestMappingInfo {
+public class AtmosRequestMappingInfoStorage {
 
 	Map<String, Object> mappingInfoStorage = new ConcurrentHashMap<String, Object>();
+	
+	Map<String, Object> mappingInfoForViewStorage = new ConcurrentHashMap<String, Object>();
 
 	/**
 	 * Retrieve handler by url
@@ -23,6 +25,16 @@ public class AtmosRequestMappingInfo {
 	 */
 	public Object get(String url) {
 		return mappingInfoStorage.get(url);
+	}
+	
+	/**
+	 * Retrieve handler for view by url
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public Object getHandlerForView(String url) {
+		return mappingInfoForViewStorage.get(url);
 	}
 
 	/**
@@ -34,6 +46,16 @@ public class AtmosRequestMappingInfo {
 	public void put(String url, Object handler) {
 		mappingInfoStorage.put(url, handler);
 	}
+	
+	/**
+	 * Store handler mapping info. This handler returns view page.
+	 * 
+	 * @param url
+	 * @param handler
+	 */
+	public void putHandlerForView(String url, Object handler) {
+		mappingInfoForViewStorage.put(url, handler);
+	}
 
 	/**
 	 * return iterator of Map
@@ -42,6 +64,14 @@ public class AtmosRequestMappingInfo {
 	 */
 	public Iterator<Entry<String, Object>> iterator() {
 		return mappingInfoStorage.entrySet().iterator();
+	}
+	
+	public Map<String, Object> getResponseBodyMappingInfos() {
+		return mappingInfoStorage;
+	}
+	
+	public Map<String, Object> getModelAndViewMappingInfos() {
+		return mappingInfoForViewStorage;
 	}
 
 }

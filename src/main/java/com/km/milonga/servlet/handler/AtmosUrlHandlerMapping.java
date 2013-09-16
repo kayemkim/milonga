@@ -23,7 +23,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 
-import com.km.milonga.rhino.AtmosRequestMappingInfo;
+import com.km.milonga.rhino.AtmosRequestMappingInfoStorage;
 import com.km.milonga.rhino.debug.RhinoDebuggerFactory;
 import com.km.milonga.servlet.checker.AtmosFunctionChecker;
 
@@ -32,7 +32,7 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	/*
 	 * storage of url-handler mapping infos
 	 */
-	private AtmosRequestMappingInfo requestMappingInfo;
+	private AtmosRequestMappingInfoStorage requestMappingInfo;
 
 	/*
 	 * Atmos library file location.
@@ -52,7 +52,7 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	/**
 	 * Setter of requestMappingInfo
 	 */
-	public void setRequestMappingInfo(AtmosRequestMappingInfo requestMappingInfo) {
+	public void setRequestMappingInfo(AtmosRequestMappingInfoStorage requestMappingInfo) {
 		this.requestMappingInfo = requestMappingInfo;
 	}
 
@@ -144,9 +144,9 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 					if (jsFile.isFile()) {
 						FileReader reader = new FileReader(jsFile);
 
-						AtmosRequestMappingInfo armi = WebApplicationContextUtils
+						AtmosRequestMappingInfoStorage armi = WebApplicationContextUtils
 								.getWebApplicationContext(getServletContext())
-								.getBean(AtmosRequestMappingInfo.class);
+								.getBean(AtmosRequestMappingInfoStorage.class);
 						global.defineProperty("mappingInfo", armi, 0);
 
 						cx.evaluateReader(global, reader, fileName, 1, null);

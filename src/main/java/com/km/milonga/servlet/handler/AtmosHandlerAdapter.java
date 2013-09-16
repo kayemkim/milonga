@@ -33,7 +33,7 @@ public class AtmosHandlerAdapter implements HandlerAdapter {
 			return ((AtmosControllerHandler) handler).handleRequest(request, response);
 		}
 		return null;*/
-		return ((AtmosFunctionHandler) handler).handleRequest(request, response);
+		return (ModelAndView) ((AtmosFunctionHandler) handler).handleModelAndView(request, response);
 	}
 
 	@Override
