@@ -106,4 +106,22 @@ public class AtmosIntegrationTest {
 				.andExpect(status().isOk())
 				.andExpect(content().string("{\"playerName\":\"foo\"}"));
 	}
+	
+	
+	@Test
+	public void javascriptStyleBinding() throws Exception {
+		mockMvc.perform(
+				get("/jsStyleBinding/bar/bar2"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("barbar2"));
+	}
+	
+	
+	@Test
+	public void javascriptSyleJavaObjectBinding() throws Exception {
+		mockMvc.perform(
+				get("/jsStyleJavaObjectBinding.json").param("playerName", "Wright"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("{\"playerName\":\"Wright\"}"));
+	}
 }

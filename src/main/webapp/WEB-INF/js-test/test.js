@@ -2,7 +2,7 @@
  * @PathVariable example
  */
 Atmos.url('/pathvariable/{varName}').defineView(function(request, response) {
-	var pathVar = request.resolvePathVariable('varName');
+	var pathVar = request['varName'];
 	var result = new Object();
 	result['pathVariable'] = pathVar;
 	return result;
@@ -13,7 +13,7 @@ Atmos.url('/pathvariable/{varName}').defineView(function(request, response) {
  * Class Object Binding example
  */
 Atmos.url('/binding').defineView(function(request, response) {
-	var data = request.bindObject('com.km.milonga.rhino.Player');
+	var data = request['com.km.milonga.rhino.Player'];
 	var result = new Object();
 	result['playerName'] = data.getPlayerName();
 	return result;
@@ -21,7 +21,8 @@ Atmos.url('/binding').defineView(function(request, response) {
 
 
 Atmos.url('/json/{id}').define(function(request, response) {
-	var id = request.resolvePathVariable('id');
+	//var id = request.resolvePathVariable('id');
+	var id = request['id'];
 	var player = new com.km.milonga.rhino.Player();
 	player.setPlayerName(id);
 	return player;
@@ -52,8 +53,8 @@ Atmos.url('/platform').defineView(function(request, response) {
  * for login action
  */
 Atmos.defineView('/login', function(request, response) {
-	var userId = request.getParameter("userId");
-	var password = request.getParameter("password");
+	var userId = request.userId;
+	var password = request.password;
 	
 	var loginResult = new Object();
 	
@@ -73,7 +74,17 @@ Atmos.defineView('/login', function(request, response) {
 	response.setCookie("mail", userId);
 	
 	// Session
-	request.getSession().setAttribute("userId", userId);
+	//request.getSession().setAttribute("userId", userId);
+	request.session['userId'] = userId;
 	
 	return loginResult;
+});
+
+
+Atmos.url('/jsStyleBinding/{foo}/{foo2}').define(function(request, response) {
+	return request['foo'] + request.foo2;
+});
+
+Atmos.url('/jsStyleJavaObjectBinding').define(function(request, response) {
+	return request['com.km.milonga.rhino.Player'];
 });
