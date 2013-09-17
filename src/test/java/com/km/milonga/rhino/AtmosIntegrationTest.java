@@ -48,17 +48,9 @@ public class AtmosIntegrationTest {
 		mockMvc.perform(get("/platform")).andExpect(status().isOk())
 				.andExpect(view().name("platform"))
 				.andExpect(forwardedUrl("/WEB-INF/views/platform.jsp"))
-				.andExpect(model().attribute("platform", "Atmos Code"));
-
-		/*mockMvc.perform(get("/library")).andExpect(status().isOk())
-				.andExpect(content().string("{\"library\":\"rhino\"}"));
-		
-		mockMvc.perform(get("/create_response")).andExpect(status().isOk())
-				.andExpect(content().string("Hello Response!"));
-		
-		mockMvc.perform(get("/add_cookie")).andExpect(status().isOk())
-				.andExpect(cookie().value("userId", "metsmania"));*/
+				.andExpect(model().attribute("platform", "Atmos Code"));		
 	}
+	
 	
 	@Test
 	public void sessionAndRedirectTest() throws Exception {
@@ -66,7 +58,8 @@ public class AtmosIntegrationTest {
 				get("/login").param("userId", "abc@sk.com").param("password","1111"))
 				.andExpect(status().isOk())
 				.andExpect(request().sessionAttribute("userId", "abc@sk.com"))
-				.andExpect(redirectedUrl("/blog?result=succeeded"));
+				.andExpect(redirectedUrl("/blog?result=succeeded"))
+				.andExpect(cookie().value("mail", "abc@sk.com"));
 	}
 	
 	
@@ -111,9 +104,9 @@ public class AtmosIntegrationTest {
 	@Test
 	public void javascriptStyleBinding() throws Exception {
 		mockMvc.perform(
-				get("/jsStyleBinding/bar/bar2"))
+				get("/jsStyleBinding/foo/bar"))
 				.andExpect(status().isOk())
-				.andExpect(content().string("barbar2"));
+				.andExpect(content().string("foobar"));
 	}
 	
 	

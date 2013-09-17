@@ -23,7 +23,7 @@ Atmos.url('/platform').define(function(request, response) {
  */
 Atmos.defineView('/login', function(request, response) {
 	var userId = request.userId;
-	var password = request.password
+	var password = request.password;
 	
 	var loginResult = new Object();
 	
@@ -33,17 +33,17 @@ Atmos.defineView('/login', function(request, response) {
 		} else {
 			loginResult.result = "succeeded";
 			// Redirect
-			response.setRedirect("/blog");
+			response.redirect = "/blog";
 		}
 	} else {
 		loginResult.result = "not available";
 	}
 	
 	// Cookie
-	response.setCookie("mail", userId);
+	response.cookie.mail = userId;
 	
 	// Session
-	request.session['userId'] = userId;
+	request.session.userId = userId;
 	
 	return loginResult;
 });
