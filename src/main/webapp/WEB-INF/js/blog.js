@@ -22,8 +22,8 @@ Atmos.url('/platform').define(function(request, response) {
  * for login action
  */
 Atmos.defineView('/login', function(request, response) {
-	var userId = request.getParameter("userId");
-	var password = request.getParameter("password");
+	var userId = request.userId;
+	var password = request.password;
 	
 	var loginResult = new Object();
 	
@@ -33,17 +33,17 @@ Atmos.defineView('/login', function(request, response) {
 		} else {
 			loginResult.result = "succeeded";
 			// Redirect
-			response.setRedirect("/blog");
+			response.redirect = "/blog";
 		}
 	} else {
 		loginResult.result = "not available";
 	}
 	
 	// Cookie
-	response.setCookie("mail", userId);
+	response.cookie.mail = userId;
 	
 	// Session
-	request.getSession().setAttribute("userId", userId);
+	request.session.userId = userId;
 	
 	return loginResult;
 });
@@ -66,7 +66,7 @@ Atmos.defineView('/blog', function(request, response) {
 
 
 Atmos.url('/user/{id}').define(function(request, response) {
-	var id = request.resolvePathVariable('id');
+	var id = request.id;
 	
 	var result = new Object();
 	result.id = id;
@@ -76,7 +76,7 @@ Atmos.url('/user/{id}').define(function(request, response) {
 
 
 Atmos.url('/blog/{id}').define(function(request, response) {
-	var id = request.resolvePathVariable('id');
+	var id = request.id;
 	
 	var blog = new com.km.milonga.externals.blog.model.Blog();
 	blog.setId(id);

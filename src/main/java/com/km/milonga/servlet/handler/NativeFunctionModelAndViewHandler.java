@@ -50,11 +50,11 @@ public class NativeFunctionModelAndViewHandler extends AbstractNativeFunctionHan
 			mv.getModelMap().mergeAttributes(convertedResult);
 		}
 		
+		// TODO considering order of priority
 		if (getRedirectPath() != null) {
 			mv.setViewName("redirect:" + getRedirectPath());
 		}
-		
-		if (getForwardPath() != null) {
+		else if (getForwardPath() != null) {
 			mv.setViewName("forward:" + getForwardPath());
 		}
 		
