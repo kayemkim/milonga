@@ -43,7 +43,7 @@ public class AtmosRequestMappingInfoStorage {
 	 * @param url
 	 * @param handler
 	 */
-	public void put(String url, Object handler) {
+	public void putHandler(String url, Object handler) {
 		mappingInfoStorage.put(url, handler);
 	}
 	
@@ -55,6 +55,14 @@ public class AtmosRequestMappingInfoStorage {
 	 */
 	public void putHandlerForView(String url, Object handler) {
 		mappingInfoForViewStorage.put(url, handler);
+	}
+	
+	public void removeHandler(String url) {
+		mappingInfoStorage.remove(url);
+	}
+	
+	public void removeHandlerForView(String url) {
+		mappingInfoForViewStorage.remove(url);
 	}
 
 	/**

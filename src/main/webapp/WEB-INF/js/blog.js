@@ -1,7 +1,7 @@
 /*
  * test view for JSON data
  */
-Atmos.url('/platform').define(function(request, response) {
+Atmos.handler('/platform', function() {
 	
 	return {
 				"platform" : "Atmos Code",
@@ -21,7 +21,7 @@ Atmos.url('/platform').define(function(request, response) {
 /*
  * for login action
  */
-Atmos.defineView('/login', function(request, response) {
+Atmos.handler('/login', function(request, response) {
 	var userId = request.userId;
 	var password = request.password;
 	
@@ -46,13 +46,13 @@ Atmos.defineView('/login', function(request, response) {
 	request.session.userId = userId;
 	
 	return loginResult;
-});
+}).toView();
 
 
 /*
  * blog list view
  */
-Atmos.defineView('/blog', function(request, response) {
+Atmos.handler('/blog', function() {
 	var result = new Object();
 	
 	var blog1 = {"title" : "Template Usage", "content" : "This is test blog #1."};
@@ -62,10 +62,10 @@ Atmos.defineView('/blog', function(request, response) {
 	result.bloggs = [blog1, blog2, blog3];
 	
 	return result;
-});
+}).toView();
 
 
-Atmos.url('/user/{id}').define(function(request, response) {
+Atmos.handler('/user/{id}', function(request) {
 	var id = request.id;
 	
 	var result = new Object();
@@ -75,7 +75,7 @@ Atmos.url('/user/{id}').define(function(request, response) {
 });
 
 
-Atmos.url('/blog/{id}').define(function(request, response) {
+Atmos.handler('/blog/{id}', function(request) {
 	var id = request.id;
 	
 	var blog = new com.km.milonga.externals.blog.model.Blog();
@@ -85,16 +85,11 @@ Atmos.url('/blog/{id}').define(function(request, response) {
 	var result = new Object();
 	result.blog = blog;
 	
-	//return blog;
-	
-	var result = {name:'Lee', age:20}
-	
-//	return "<person><name>aaa</name><age>28</age></person>";
-	return result;
+	return blog;
 });
 
 
-Atmos.url('/end').define(function(request, response) {
+Atmos.handler('/end', function() {
 	return 'the end.';
 });
 

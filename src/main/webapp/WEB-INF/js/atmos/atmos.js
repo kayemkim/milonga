@@ -4,7 +4,8 @@ function Atmos() {
 
 Atmos.prototype = {
 	define: function(url, handler) {
-		mappingInfo.put(url, handler);
+		mappingInfo.putHandler(url, handler);
+		mappingInfo.removeHandlerForView(url);
 	},
 	
 	route: function(url) {
@@ -17,34 +18,17 @@ Atmos.prototype = {
 	
 	defineView: function(url, handler) {
 		mappingInfo.putHandlerForView(url, handler);
+		mappingInfo.removeHandler(url);
+	},
+	
+	handler: function(url, handler) {
+		this.define(url, handler);
+		return new Handler(url, handler);
 	}
-
 };
 
 var Atmos = new Atmos();
 
-
-function Response(content) {
-	this.content = content;
-};
-
-Response.prototype = {
-	cookie: {
-		
-	},
-	
-	getContent: function() {
-		return this.content;
-	},
-	
-	setContent: function(content) {
-		this.content = content;
-	},
-	
-	setCookie: function(name, value) {
-		this.cookie[name] = value;
-	}
-};
 
 
 /**
@@ -90,4 +74,14 @@ Route.prototype = {
 	
 };
 
+function Handler(url, process) {
+	this.url = url;
+	this.process = process;
+};
+
+Handler.prototype = {
+	toView: function(viewName) {
+		Atmos.defineView(this.url, this.process);
+	}
+};
 
