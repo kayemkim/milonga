@@ -2,8 +2,6 @@
  * path variable
  */
 Atmos.url('/foo/{bar1}/{bar2}').define(function(request, response) {
-	var bar1 = request.bar1;
-	var bar2 = request.bar2;
 	return bar1 + bar2;
 });
 
@@ -12,7 +10,18 @@ Atmos.url('/foo/{bar1}/{bar2}').define(function(request, response) {
  * binding object
  */
 Atmos.url('/binding_object').define(function(request, response) {
-	var foo = request['com.sample.Foo'];
+	var foo = request.bindAs('com.sample.Foo');
+	
+	//var foo = Atmos.bind('com.sample.Foo', request.params);
+	//foo = request.bindAs('com.'); //call Atmos.bind(request.params, 'com.')
+	
+	/*
+	var foo = binder('com.sample.Foo').bind(request);
+	var foo = binder['com.sample.Foo'];
+	var foo = request.bind('com.sample.Foo');
+	var foo = request.binder['com.sample.Foo'];
+	*/
+	
 	return foo;
 });
 

@@ -5,10 +5,9 @@ import java.util.Map;
 
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 import org.springframework.web.bind.support.WebRequestDataBinder;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.servlet.HandlerMapping;
 
 /**
  * HttpServletRequest replacement class
@@ -27,37 +26,34 @@ public class AtmosRequest extends NativeObject {
 	public AtmosRequest(ServletWebRequest servletWebRequest) {
 		super();
 		this.servletWebRequest = servletWebRequest;
-		initializePathVariable();
 		initializeRequestParameters();
+		this.defineFunctionProperties(new String[]{"bindAs"}, this.getClass(), ScriptableObject.DONTENUM);
 	}
 
 	@Override
 	public Object get(String name, Scriptable start) {
 		Object value = super.get(name, start);
-
+		
 		if (SESSION.equals(name)) {
 			return getSession(value);
 		}
-
-		if (value.equals(Scriptable.NOT_FOUND)) {
-			return getBindingObject(value, name);
-		}
-
+		
 		return value;
 	}
-
-	private void initializePathVariable() {
-		@SuppressWarnings("unchecked")
-		Map<String, String> uriTemplateVars = (Map<String, String>) servletWebRequest
-				.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE,
-						RequestAttributes.SCOPE_REQUEST);
-		Iterator<Map.Entry<String, String>> iterator = uriTemplateVars
-				.entrySet().iterator();
-		while (iterator.hasNext()) {
-			String key = iterator.next().getKey();
-			String value = uriTemplateVars.get(key);
-			defineProperty(key, value, 0);
+	
+	public Object bindAs(String className) {
+		Object value = null;
+		try {
+			Class<?> clazz = Class.forName(className);
+			Object object = clazz.newInstance();
+			WebRequestDataBinder binder = new WebRequestDataBinder(object);
+			binder.setIgnoreUnknownFields(false);
+			binder.bind(servletWebRequest);
+			value = binder.getTarget();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return value;
 	}
 
 	private void initializeRequestParameters() {
@@ -82,19 +78,5 @@ public class AtmosRequest extends NativeObject {
 		}
 		return value;
 	}
-
-	private Object getBindingObject(Object value, String name) {
-		try {
-			Class<?> clazz = Class.forName(name);
-			Object object = clazz.newInstance();
-			WebRequestDataBinder binder = new WebRequestDataBinder(object);
-			binder.setIgnoreUnknownFields(false);
-			binder.bind(servletWebRequest);
-			value = binder.getTarget();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return value;
-	}
-
+	
 }

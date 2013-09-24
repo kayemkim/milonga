@@ -1,10 +1,9 @@
 /*
  * @PathVariable example
  */
-Atmos.url('/pathvariable/{varName}').defineView(function(request, response) {
-	var pathVar = request['varName'];
+Atmos.url('/pathvariable/{varName}').defineView(function(request) {
 	var result = new Object();
-	result['pathVariable'] = pathVar;
+	result['pathVariable'] = varName;
 	return result;
 });
 
@@ -12,17 +11,15 @@ Atmos.url('/pathvariable/{varName}').defineView(function(request, response) {
 /*
  * Class Object Binding example
  */
-Atmos.url('/binding').defineView(function(request, response) {
-	var data = request['com.km.milonga.rhino.Player'];
+Atmos.url('/binding').defineView(function(request) {
+	var data = request.bindAs('com.km.milonga.rhino.Player');
 	var result = new Object();
 	result['playerName'] = data.getPlayerName();
 	return result;
 });
 
 
-Atmos.url('/json/{id}').define(function(request, response) {
-	//var id = request.resolvePathVariable('id');
-	var id = request['id'];
+Atmos.url('/json/{id}').define(function() {
 	var player = new com.km.milonga.rhino.Player();
 	player.setPlayerName(id);
 	return player;
@@ -32,7 +29,7 @@ Atmos.url('/json/{id}').define(function(request, response) {
 /*
  * test view for JSON data
  */
-Atmos.url('/platform').defineView(function(request, response) {
+Atmos.url('/platform').defineView(function() {
 	
 	return {
 				"platform" : "Atmos Code",
@@ -80,10 +77,10 @@ Atmos.defineView('/login', function(request, response) {
 });
 
 
-Atmos.url('/jsStyleBinding/{foo}/{foo2}').define(function(request, response) {
-	return request['foo'] + request.foo2;
+Atmos.url('/jsStyleBinding/{foo}/{foo2}').define(function() {
+	return foo + foo2;
 });
 
-Atmos.url('/jsStyleJavaObjectBinding').define(function(request, response) {
-	return request['com.km.milonga.rhino.Player'];
+Atmos.url('/jsStyleJavaObjectBinding').define(function(request) {
+	return request.bindAs('com.km.milonga.rhino.Player');
 });

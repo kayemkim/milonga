@@ -85,8 +85,12 @@ Atmos.url('/blog/{id}').define(function(request, response) {
 	var result = new Object();
 	result.blog = blog;
 	
-	return blog;
-	//return result;
+	//return blog;
+	
+	var result = {name:'Lee', age:20}
+	
+//	return "<person><name>aaa</name><age>28</age></person>";
+	return result;
 });
 
 

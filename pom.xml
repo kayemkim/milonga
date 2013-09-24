@@ -134,11 +134,11 @@
 		</dependency>
 		
 		<!-- Rhino -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.mozilla</groupId>
 			<artifactId>rhino</artifactId>
 			<version>1.7R4</version>
-		</dependency>
+		</dependency> -->
 		
 		<!-- Spring Test MVC -->
 		<dependency>
