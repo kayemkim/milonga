@@ -21,9 +21,9 @@ Atmos.handler('/platform', function() {
 /*
  * for login action
  */
-Atmos.handler('/login', function(request, response) {
-	var userId = request.userId;
-	var password = request.password;
+Atmos.handler('/login', function(req, res) {
+	var userId = req.userId;
+	var password = req.password;
 	
 	var loginResult = new Object();
 	
@@ -33,17 +33,17 @@ Atmos.handler('/login', function(request, response) {
 		} else {
 			loginResult.result = "succeeded";
 			// Redirect
-			response.redirect = "/blog";
+			res.redirect = "/blog";
 		}
 	} else {
 		loginResult.result = "not available";
 	}
 	
 	// Cookie
-	response.cookie.mail = userId;
+	res.cookie.mail = userId;
 	
 	// Session
-	request.session.userId = userId;
+	req.session.userId = userId;
 	
 	return loginResult;
 }).toView();
@@ -62,12 +62,10 @@ Atmos.handler('/blog', function() {
 	result.bloggs = [blog1, blog2, blog3];
 	
 	return result;
-}).toView();
+}).toView('blog');
 
 
-Atmos.handler('/user/{id}', function(request) {
-	var id = request.id;
-	
+Atmos.handler('/user/{id}', function(req) {
 	var result = new Object();
 	result.id = id;
 	
@@ -75,9 +73,7 @@ Atmos.handler('/user/{id}', function(request) {
 });
 
 
-Atmos.handler('/blog/{id}', function(request) {
-	var id = request.id;
-	
+Atmos.handler('/blog/{id}', function(req) {
 	var blog = new com.km.milonga.externals.blog.model.Blog();
 	blog.setId(id);
 	blog.setTitle("This is " + id + "'s blog.");

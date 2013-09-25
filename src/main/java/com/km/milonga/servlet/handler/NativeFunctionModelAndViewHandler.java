@@ -16,6 +16,8 @@ import org.mozilla.javascript.Undefined;
 import org.springframework.web.servlet.ModelAndView;
 
 public class NativeFunctionModelAndViewHandler extends AbstractNativeFunctionHandler {
+	
+	private String viewName = null;
 
 	public NativeFunctionModelAndViewHandler(NativeFunction atmosFunction) {
 		super(atmosFunction);
@@ -50,6 +52,8 @@ public class NativeFunctionModelAndViewHandler extends AbstractNativeFunctionHan
 			mv.getModelMap().mergeAttributes(convertedResult);
 		}
 		
+		mv.setViewName(viewName);
+		
 		// TODO considering order of priority
 		if (getRedirectPath() != null) {
 			mv.setViewName("redirect:" + getRedirectPath());
@@ -59,6 +63,10 @@ public class NativeFunctionModelAndViewHandler extends AbstractNativeFunctionHan
 		}
 		
 		return mv;
+	}
+	
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
 	}
 
 }

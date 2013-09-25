@@ -16,8 +16,11 @@ Atmos.prototype = {
 		return new Route(url);
 	},
 	
-	defineView: function(url, handler) {
+	defineView: function(url, handler, viewName) {
 		mappingInfo.putHandlerForView(url, handler);
+		if(viewName != undefined) {
+			mappingInfo.putViewName(url, viewName);
+		}
 		mappingInfo.removeHandler(url);
 	},
 	
@@ -68,8 +71,8 @@ Route.prototype = {
 	define: function(process) {
 		Atmos.define(this.url, process);
 	},
-	defineView: function(process) {
-		Atmos.defineView(this.url, process);
+	defineView: function(process, viewName) {
+		Atmos.defineView(this.url, process, viewName);
 	}
 	
 };
@@ -81,7 +84,7 @@ function Handler(url, process) {
 
 Handler.prototype = {
 	toView: function(viewName) {
-		Atmos.defineView(this.url, this.process);
+		Atmos.defineView(this.url, this.process, viewName);
 	}
 };
 

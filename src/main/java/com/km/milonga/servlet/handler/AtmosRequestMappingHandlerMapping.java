@@ -98,6 +98,11 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 			Object atmosHandler = getHandler(atmosFunction, handlerClassType);
 			Class<?> handlerType = (atmosHandler instanceof String) ?
 					getApplicationContext().getType((String) atmosHandler) : atmosHandler.getClass();
+			
+			if(atmosHandler instanceof NativeFunctionModelAndViewHandler) {
+				((NativeFunctionModelAndViewHandler) atmosHandler).setViewName(requestMappingInfo.getViewName(url));
+			}
+					
 			final Class<?> userType = ClassUtils.getUserClass(handlerType);
 			
 			Method method = userType.getMethod(
