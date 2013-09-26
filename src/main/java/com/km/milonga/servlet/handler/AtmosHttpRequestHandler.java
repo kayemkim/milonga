@@ -68,6 +68,7 @@ public class AtmosHttpRequestHandler {
 	 * @param response
 	 *            HttpServletResponse
 	 */
+	@SuppressWarnings("unchecked")
 	private void setCookie(NativeObject result, HttpServletResponse response) {
 		Map<String, String> cookieMap = ScriptableObject.getTypedProperty(
 				result, "cookie", Map.class);

@@ -17,6 +17,7 @@ public class MapConversionTest {
 	
 	public static int count = 0;
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void convertMap() {
 		HashMap<String, Object> map = new HashMap<String, Object>();
@@ -57,6 +58,7 @@ public class MapConversionTest {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public ConcurrentHashMap<String, Object> convertHashMapToConcurrentHashMap(HashMap<String, Object> hashMap) {
 		ConcurrentHashMap<String, Object> chm = new ConcurrentHashMap<String, Object>();
 		Iterator<Entry<String, Object>> iterator = hashMap.entrySet().iterator();
@@ -76,6 +78,7 @@ public class MapConversionTest {
 	}
 	
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public LinkedList<Object> convertArrayListToLinkedList(ArrayList<Object> arrayList) {
 		LinkedList<Object> ll = new LinkedList<Object>();
 		

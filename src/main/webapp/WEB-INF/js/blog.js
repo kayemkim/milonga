@@ -15,7 +15,7 @@ Atmos.handler('/platform', function() {
 				},
 				"users" : ["Tom", "John"]
 			}; 
-});
+}).toView();
 
 
 /*

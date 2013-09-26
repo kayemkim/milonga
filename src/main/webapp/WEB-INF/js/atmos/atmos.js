@@ -77,12 +77,25 @@ Route.prototype = {
 	
 };
 
+
+/**
+ * Javascript handler representing Spring MVC handler
+ * 
+ * @param url		url path
+ * @param process	handler method
+ * @returns
+ */
 function Handler(url, process) {
 	this.url = url;
 	this.process = process;
 };
 
 Handler.prototype = {
+	/**
+	 * return ModelAndView 
+	 * 
+	 * @param viewName	view page name
+	 */
 	toView: function(viewName) {
 		Atmos.defineView(this.url, this.process, viewName);
 	}
