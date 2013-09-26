@@ -17,7 +17,7 @@
 	<resources mapping="/resources/**" location="/resources/" />
 	
 	<!-- Scalate View Resolver -->
-	<!-- <beans:bean class="com.km.milonga.template.AtmosScalateViewResolver">
+	<!-- <beans:bean class="com.skp.milonga.template.AtmosScalateViewResolver">
 		<beans:property name="order" value="2" />
 		<beans:property name="prefix" value="/WEB-INF/views/scalate/" />
 		<beans:property name="suffix" value=".jade" />
@@ -69,21 +69,21 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<!-- <beans:bean class="com.km.milonga.servlet.handler.AtmosUrlHandlerMapping">
+	<!-- <beans:bean class="com.skp.milonga.servlet.handler.AtmosUrlHandlerMapping">
 		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfoStorage" />
 		<beans:property name="atmosLibraryLocation" value="WEB-INF/js/atmos" />
 		<beans:property name="userSourceLocation" value="WEB-INF/js" />
 		<beans:property name="functionChecker" ref="atmosFunctionChecker"/>
 	</beans:bean> -->
 	
-	<beans:bean class="com.km.milonga.servlet.handler.AtmosRequestMappingHandlerMapping">
+	<beans:bean class="com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping">
 		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfoStorage" />
 		<beans:property name="atmosLibraryLocation" value="WEB-INF/js/atmos" />
 		<beans:property name="userSourceLocation" value="WEB-INF/js" />
 	</beans:bean>
 	
 	<!-- HandlerAdapter for handling simple request and response -->
-	<!-- <beans:bean class="com.km.milonga.servlet.handler.AtmosHandlerAdapter" /> -->
+	<!-- <beans:bean class="com.skp.milonga.servlet.handler.AtmosHandlerAdapter" /> -->
 	
 	<!-- Simple strategy: only path extension is taken into account -->
 	<!-- <beans:bean id="cnManager"
@@ -117,7 +117,7 @@
 						<beans:bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
 							<beans:property name="classesToBeBound">
 								<beans:list>
-									<beans:value>com.km.milonga.externals.blog.model.Blog</beans:value>
+									<beans:value>com.skp.milonga.externals.blog.model.Blog</beans:value>
 								</beans:list>
 							</beans:property>
 						</beans:bean>
@@ -130,8 +130,8 @@
 	
 	<default-servlet-handler />
 	<!-- Enable pretty-print on the Jackson Http Message convertor -->
-	<beans:bean class="com.km.milonga.MvcConfiguringPostProcessor" />
+	<beans:bean class="com.skp.milonga.MvcConfiguringPostProcessor" />
 	
-	<context:component-scan base-package="com.km.milonga" />
+	<context:component-scan base-package="com.skp.milonga" />
 	
 </beans:beans>

@@ -74,7 +74,7 @@ Atmos.handler('/user/{id}', function(req) {
 
 
 Atmos.handler('/blog/{id}', function(req) {
-	var blog = new com.km.milonga.externals.blog.model.Blog();
+	var blog = new com.skp.milonga.externals.blog.model.Blog();
 	blog.setId(id);
 	blog.setTitle("This is " + id + "'s blog.");
 	
