@@ -12,7 +12,10 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.servlet.HandlerMapping;
 
 import com.km.milonga.servlet.AtmosCookie;
 import com.km.milonga.servlet.AtmosRequest;
@@ -65,21 +68,40 @@ public abstract class AbstractNativeFunctionHandler {
 	 */
 	protected Object callNativeFunction(HttpServletRequest request,
 			HttpServletResponse response) {
-		Context context = Context.enter();
-		Scriptable scope = context.initStandardObjects();
-
+		
 		ServletWebRequest servletWebRequest = new ServletWebRequest(request);
 		AtmosRequest atmosRequest = new AtmosRequest(servletWebRequest);
 		AtmosResponse atmosResponse = new AtmosResponse();
-
-		Object result = atmosFunction.call(context, scope, scope, new Object[] {
+		
+		Context context = Context.enter();
+		ScriptableObject scope = context.initStandardObjects();
+		
+		// inject path variable to parent scope
+		injectPathVariables(servletWebRequest, scope);
+		
+		atmosFunction.setParentScope(scope);
+		Object result = atmosFunction.call(context, scope, atmosFunction, new Object[] {
 				atmosRequest, atmosResponse });
-
+		
 		processCookie(atmosResponse, response, scope);
 		processSession(atmosRequest, request, scope);
 		processRedirectOrForwardPath(atmosResponse, scope);
 
 		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void injectPathVariables(ServletWebRequest servletWebRequest, ScriptableObject scope) {
+		Map<String, String> uriTemplateVars = (Map<String, String>) servletWebRequest
+				.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE,
+						RequestAttributes.SCOPE_REQUEST);
+		Iterator<Map.Entry<String, String>> iterator = uriTemplateVars
+				.entrySet().iterator();
+		while (iterator.hasNext()) {
+			String key = iterator.next().getKey();
+			String value = uriTemplateVars.get(key);
+			scope.defineProperty(key, value, ScriptableObject.DONTENUM);
+		}
 	}
 
 	private void processCookie(AtmosResponse atmosResponse,

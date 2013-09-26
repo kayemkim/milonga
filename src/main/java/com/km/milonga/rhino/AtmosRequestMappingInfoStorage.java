@@ -16,6 +16,8 @@ public class AtmosRequestMappingInfoStorage {
 	Map<String, Object> mappingInfoStorage = new ConcurrentHashMap<String, Object>();
 	
 	Map<String, Object> mappingInfoForViewStorage = new ConcurrentHashMap<String, Object>();
+	
+	Map<String, String> mappingInfoForViewNameStorage = new ConcurrentHashMap<String, String>();
 
 	/**
 	 * Retrieve handler by url
@@ -36,6 +38,10 @@ public class AtmosRequestMappingInfoStorage {
 	public Object getHandlerForView(String url) {
 		return mappingInfoForViewStorage.get(url);
 	}
+	
+	public String getViewName(String url) {
+		return mappingInfoForViewNameStorage.get(url);
+	}
 
 	/**
 	 * Store url-handler mapping info
@@ -43,7 +49,7 @@ public class AtmosRequestMappingInfoStorage {
 	 * @param url
 	 * @param handler
 	 */
-	public void put(String url, Object handler) {
+	public void putHandler(String url, Object handler) {
 		mappingInfoStorage.put(url, handler);
 	}
 	
@@ -55,6 +61,19 @@ public class AtmosRequestMappingInfoStorage {
 	 */
 	public void putHandlerForView(String url, Object handler) {
 		mappingInfoForViewStorage.put(url, handler);
+	}
+	
+	public void putViewName(String url, String viewName) {
+		mappingInfoForViewNameStorage.put(url, viewName);
+	}
+	
+	public void removeHandler(String url) {
+		mappingInfoStorage.remove(url);
+	}
+	
+	public void removeHandlerForView(String url) {
+		mappingInfoForViewStorage.remove(url);
+		mappingInfoForViewNameStorage.remove(url);
 	}
 
 	/**

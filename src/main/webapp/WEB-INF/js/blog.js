@@ -1,7 +1,7 @@
 /*
  * test view for JSON data
  */
-Atmos.url('/platform').define(function(request, response) {
+Atmos.handler('/platform', function() {
 	
 	return {
 				"platform" : "Atmos Code",
@@ -15,15 +15,15 @@ Atmos.url('/platform').define(function(request, response) {
 				},
 				"users" : ["Tom", "John"]
 			}; 
-});
+}).toView();
 
 
 /*
  * for login action
  */
-Atmos.defineView('/login', function(request, response) {
-	var userId = request.userId;
-	var password = request.password;
+Atmos.handler('/login', function(req, res) {
+	var userId = req.userId;
+	var password = req.password;
 	
 	var loginResult = new Object();
 	
@@ -33,26 +33,26 @@ Atmos.defineView('/login', function(request, response) {
 		} else {
 			loginResult.result = "succeeded";
 			// Redirect
-			response.redirect = "/blog";
+			res.redirect = "/blog";
 		}
 	} else {
 		loginResult.result = "not available";
 	}
 	
 	// Cookie
-	response.cookie.mail = userId;
+	res.cookie.mail = userId;
 	
 	// Session
-	request.session.userId = userId;
+	req.session.userId = userId;
 	
 	return loginResult;
-});
+}).toView();
 
 
 /*
  * blog list view
  */
-Atmos.defineView('/blog', function(request, response) {
+Atmos.handler('/blog', function() {
 	var result = new Object();
 	
 	var blog1 = {"title" : "Template Usage", "content" : "This is test blog #1."};
@@ -62,12 +62,10 @@ Atmos.defineView('/blog', function(request, response) {
 	result.bloggs = [blog1, blog2, blog3];
 	
 	return result;
-});
+}).toView('blog');
 
 
-Atmos.url('/user/{id}').define(function(request, response) {
-	var id = request.id;
-	
+Atmos.handler('/user/{id}', function(req) {
 	var result = new Object();
 	result.id = id;
 	
@@ -75,9 +73,7 @@ Atmos.url('/user/{id}').define(function(request, response) {
 });
 
 
-Atmos.url('/blog/{id}').define(function(request, response) {
-	var id = request.id;
-	
+Atmos.handler('/blog/{id}', function(req) {
 	var blog = new com.km.milonga.externals.blog.model.Blog();
 	blog.setId(id);
 	blog.setTitle("This is " + id + "'s blog.");
@@ -86,11 +82,10 @@ Atmos.url('/blog/{id}').define(function(request, response) {
 	result.blog = blog;
 	
 	return blog;
-	//return result;
 });
 
 
-Atmos.url('/end').define(function(request, response) {
+Atmos.handler('/end', function() {
 	return 'the end.';
 });
 

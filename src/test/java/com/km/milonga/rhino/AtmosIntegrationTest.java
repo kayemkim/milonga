@@ -1,7 +1,14 @@
 package com.km.milonga.rhino;
 
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.cookie;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.forwardedUrl;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.request;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.view;
 
 import javax.annotation.Resource;
 

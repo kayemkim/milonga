@@ -126,8 +126,7 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
 			String path = getServletContextPath() + atmosLibraryLocation
 					+ "/atmos.js";
-			FileReader atmosReader = new FileReader(getServletContextPath()
-					+ atmosLibraryLocation + "/atmos.js");
+			FileReader atmosReader = new FileReader(path);
 			cx.evaluateReader(global, atmosReader, "atmos.js", 1, null);
 
 			/*
@@ -174,6 +173,7 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 			NativeFunction atmosFunction) {
 
 		try {
+			
 			Class<?> handlerTypeClass = functionChecker
 					.checkAndProcess(atmosFunction);
 			Constructor<?> handlerConst = handlerTypeClass
@@ -181,26 +181,6 @@ public class AtmosUrlHandlerMapping extends AbstractUrlHandlerMapping {
 			Object handler = handlerConst.newInstance(atmosFunction);
 			registerHandler(url, handler);
 			
-			
-			/*String[] patterns = {url};
-			boolean useSuffixPatternMatch = true;
-			boolean useTrailingSlashMatch = true;
-			List<String> fileExtensions = new ArrayList<String>();
-			fileExtensions.add("json");
-			
-			
-			RequestMappingInfo rmi = new RequestMappingInfo(
-					new PatternsRequestCondition(patterns, getUrlPathHelper(), getPathMatcher(),
-							useSuffixPatternMatch, useTrailingSlashMatch, fileExtensions),
-					new RequestMethodsRequestCondition(RequestMethod.GET),
-					new ParamsRequestCondition(null),
-					new HeadersRequestCondition(null),
-					new ConsumesRequestCondition(null, null),
-					new ProducesRequestCondition(null, null, new ContentNegotiationManager()),
-					null);
-			
-			registerHandler(url, rmi);*/
-
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
