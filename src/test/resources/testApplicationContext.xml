@@ -46,7 +46,6 @@
 	</beans:bean> -->
 	<beans:bean class="com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping">
 		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfoStorage" />
-		<beans:property name="atmosLibraryLocation" value="WEB-INF/js/atmos" />
 		<beans:property name="userSourceLocation" value="WEB-INF/js-test" />
 	</beans:bean>
 	

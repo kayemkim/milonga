@@ -5,7 +5,7 @@
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	
-	<bean id="atmosFunctionChecker" class="com.skp.milonga.servlet.checker.AtmosFunctionChecker">
+	<!-- <bean id="atmosFunctionChecker" class="com.skp.milonga.servlet.checker.AtmosFunctionChecker">
 		<property name="validatorList">
 			<list>
 				<value>com.skp.milonga.servlet.checker.AtmosHttpRequestHandlerValidator</value>
@@ -14,5 +14,5 @@
 		</property>
 	</bean>
 	
-	<bean id="atmosRequestMappingInfoStorage" class="com.skp.milonga.rhino.AtmosRequestMappingInfoStorage"/>
+	<bean id="atmosRequestMappingInfoStorage" class="com.skp.milonga.rhino.AtmosRequestMappingInfoStorage"/> -->
 </beans>

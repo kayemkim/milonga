@@ -2,11 +2,11 @@ package com.skp.milonga.servlet.handler;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -29,15 +29,18 @@ import com.skp.milonga.rhino.debug.RhinoDebuggerFactory;
 
 public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapping {
 	
+	public static final String ATMOS_JS_FILE_NAME = "atmos.js";
+	
 	/*
 	 * storage of url-handler mapping infos
 	 */
 	private AtmosRequestMappingInfoStorage requestMappingInfo;
 
 	/*
-	 * Atmos library file location.
+	 * Atmos library file stream.
 	 */
-	private String atmosLibraryLocation;
+	private InputStream atmosLibraryStream = getClass().getClassLoader()
+			.getResourceAsStream(ATMOS_JS_FILE_NAME);
 
 	/*
 	 * Location of user-scripting javascript files. This should be directory.
@@ -48,11 +51,12 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 	@Override
 	protected void initHandlerMethods() {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Looking for request mappings in application context: " + getApplicationContext());
+			logger.debug("Looking for request mappings in application context: "
+					+ getApplicationContext());
 		}
-		
+
 		detectHandlerMethods();
-		
+
 		handlerMethodsInitialized(getHandlerMethods());
 	}
 	
@@ -131,10 +135,9 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 		Global global = new Global(cx);
 
 		// javascript library loading
-		List<String> modulePath = new ArrayList<String>();
-
+		/*List<String> modulePath = new ArrayList<String>();
 		modulePath.add(getServletContextPath() + atmosLibraryLocation);
-		global.installRequire(cx, modulePath, false);
+		global.installRequire(cx, modulePath, false);*/
 
 		try {
 			// optimization level -1 means interpret mode
@@ -142,11 +145,10 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 			Debugger debugger = RhinoDebuggerFactory.create();
 			cx.setDebugger(debugger, new Dim.ContextData());
 
-			/*String path = getServletContextPath() + atmosLibraryLocation
-					+ "/atmos.js";*/
-			FileReader atmosReader = new FileReader(getServletContextPath()
-					+ atmosLibraryLocation + "/atmos.js");
-			cx.evaluateReader(global, atmosReader, "atmos.js", 1, null);
+			InputStreamReader isr = new InputStreamReader(atmosLibraryStream);
+			
+			
+			cx.evaluateReader(global, isr, ATMOS_JS_FILE_NAME, 1, null);
 
 			/*
 			 * execute all user scripting javascript files in configured
@@ -211,13 +213,6 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 	 */
 	public void setRequestMappingInfo(AtmosRequestMappingInfoStorage requestMappingInfo) {
 		this.requestMappingInfo = requestMappingInfo;
-	}
-
-	/**
-	 * Setter of atmosLibraryLocation
-	 */
-	public void setAtmosLibraryLocation(String atmosLibraryLocation) {
-		this.atmosLibraryLocation = atmosLibraryLocation;
 	}
 
 	/**
