@@ -25,20 +25,6 @@
 		<beans:property name="suffix" value=".mustache" />
 	</beans:bean> -->
 	
-	<!-- for Rythm Template -->
-	<!-- <beans:bean id="rythmConfigurator" class="com.ctlok.springframework.web.servlet.view.rythm.RythmConfigurator">
-    	<beans:property name="mode" value="dev" />
-    	<beans:property name="rootDirectory" value="/WEB-INF/views/rythm/" />
-	</beans:bean>
-	<beans:bean id="rythmViewResolver" class="com.ctlok.springframework.web.servlet.view.rythm.RythmViewResolver">
-		<beans:property name="order" value="3" />
-    	<beans:constructor-arg>
-        	<beans:ref bean="rythmConfigurator" />
-    	</beans:constructor-arg>
-    	<beans:property name="prefix" value="/WEB-INF/views/rythm/" />
-    	<beans:property name="suffix" value=".jsp" />
-	</beans:bean> -->
-	
 	<!-- for Mustache.java-spring-webmvc -->
 	<!-- <beans:bean id="viewResolver" class="org.springframework.web.servlet.view.mustache.MustacheViewResolver">
 		<beans:property name="order" value="4" />
