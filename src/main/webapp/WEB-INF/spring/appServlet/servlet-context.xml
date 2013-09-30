@@ -25,28 +25,6 @@
 		<beans:property name="suffix" value=".mustache" />
 	</beans:bean> -->
 	
-	<!-- for Mustache.java-spring-webmvc -->
-	<!-- <beans:bean id="viewResolver" class="org.springframework.web.servlet.view.mustache.MustacheViewResolver">
-		<beans:property name="order" value="4" />
-	    <beans:property name="cache" value="false" />
-	    <beans:property name="prefix" value="/WEB-INF/views/mustache/" />
-	    <beans:property name="suffix" value=".html" />
-	    <beans:property name="templateLoader">
-	        <beans:bean class="org.springframework.web.servlet.view.mustache.MustacheTemplateLoader" />
-	    </beans:property>
-	</beans:bean>
-	<beans:bean id="messageInterceptor" class="org.springframework.web.servlet.i18n.MustacheMessageInterceptor">
-	    <beans:constructor-arg ref="messageSource" />
-	    <beans:constructor-arg ref="localeResolver" />
-	    <property name="messageKey" value="i18n"/> default is 'i18n'
-	</beans:bean>
-	<beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-	    <beans:property name="basename" value="classpath:messages"/>
-	</beans:bean>
-	<beans:bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-	    <beans:property name="defaultLocale" value="en"/>
-	</beans:bean> -->
-	
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="contentType" value="text/html" />
