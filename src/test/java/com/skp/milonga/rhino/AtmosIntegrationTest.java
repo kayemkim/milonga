@@ -55,7 +55,7 @@ public class AtmosIntegrationTest {
 		mockMvc.perform(get("/platform")).andExpect(status().isOk())
 				.andExpect(view().name("platform"))
 				.andExpect(forwardedUrl("/WEB-INF/views/platform.jsp"))
-				.andExpect(model().attribute("platform", "Atmos Code"));		
+				.andExpect(model().attribute("platform", "Atmos Code"));
 	}
 	
 	

@@ -5,7 +5,7 @@ function Atmos() {
 Atmos.prototype = {
 	define: function(url, handler) {
 		mappingInfo.putHandler(url, handler);
-		mappingInfo.removeHandlerForView(url);
+		//mappingInfo.removeHandlerWithView(url);
 	},
 	
 	route: function(url) {
@@ -17,11 +17,11 @@ Atmos.prototype = {
 	},
 	
 	defineView: function(url, handler, viewName) {
-		mappingInfo.putHandlerForView(url, handler);
+		mappingInfo.putHandlerWithView(url, handler);
 		if(viewName != undefined) {
 			mappingInfo.putViewName(url, viewName);
 		}
-		mappingInfo.removeHandler(url);
+		//mappingInfo.removeHandler(url);
 	},
 	
 	handler: function(url, handler) {

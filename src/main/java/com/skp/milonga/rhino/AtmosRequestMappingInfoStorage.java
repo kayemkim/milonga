@@ -9,57 +9,91 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author kminkim
  * 
  */
-public class AtmosRequestMappingInfoStorage {
+public class AtmosRequestMappingInfoStorage implements HandlerMappingInfoStorage {
 
-	Map<String, Object> mappingInfoStorage = new ConcurrentHashMap<String, Object>();
-	
-	Map<String, Object> mappingInfoForViewStorage = new ConcurrentHashMap<String, Object>();
-	
-	Map<String, String> mappingInfoForViewNameStorage = new ConcurrentHashMap<String, String>();
-	
-	public String getViewName(String url) {
-		return mappingInfoForViewNameStorage.get(url);
-	}
+	private Map<String, Object> handlerMappingStorage = new ConcurrentHashMap<String, Object>();
 
-	/**
-	 * Store url-handler mapping info
+	private Map<String, Object> handlerWithViewMappingInfoStorage = new ConcurrentHashMap<String, Object>();
+
+	private Map<String, String> viewNameMappingInfoStorage = new ConcurrentHashMap<String, String>();
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param url
-	 * @param handler
+	 * @see
+	 * com.skp.milonga.rhino.MappingInfoStorage#putHandler(java.lang.String,
+	 * java.lang.Object)
 	 */
+	@Override
 	public void putHandler(String url, Object handler) {
-		mappingInfoStorage.put(url, handler);
+		handlerMappingStorage.put(url, handler);
+		removeHandlerWithView(url);
 	}
-	
-	/**
-	 * Store handler mapping info. This handler returns view page.
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param url
-	 * @param handler
+	 * @see
+	 * com.skp.milonga.rhino.MappingInfoStorage#putHandlerWithView(java.lang
+	 * .String, java.lang.Object)
 	 */
-	public void putHandlerForView(String url, Object handler) {
-		mappingInfoForViewStorage.put(url, handler);
+	@Override
+	public void putHandlerWithView(String url, Object handler) {
+		handlerWithViewMappingInfoStorage.put(url, handler);
+		removeHandler(url);
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.skp.milonga.rhino.MappingInfoStorage#putViewName(java.lang.String,
+	 * java.lang.String)
+	 */
+	@Override
 	public void putViewName(String url, String viewName) {
-		mappingInfoForViewNameStorage.put(url, viewName);
+		viewNameMappingInfoStorage.put(url, viewName);
 	}
-	
-	public void removeHandler(String url) {
-		mappingInfoStorage.remove(url);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.skp.milonga.rhino.MappingInfoStorage#getHandlerMappingInfos()
+	 */
+	@Override
+	public Map<String, Object> getHandlerMappingInfos() {
+		return handlerMappingStorage;
 	}
-	
-	public void removeHandlerForView(String url) {
-		mappingInfoForViewStorage.remove(url);
-		mappingInfoForViewNameStorage.remove(url);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.skp.milonga.rhino.MappingInfoStorage#getHandlerWithViewMappingInfos()
+	 */
+	@Override
+	public Map<String, Object> getHandlerWithViewMappingInfos() {
+		return handlerWithViewMappingInfoStorage;
 	}
-	
-	public Map<String, Object> getResponseBodyMappingInfos() {
-		return mappingInfoStorage;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.skp.milonga.rhino.MappingInfoStorage#getViewName(java.lang.String)
+	 */
+	@Override
+	public String getViewName(String url) {
+		return viewNameMappingInfoStorage.get(url);
 	}
-	
-	public Map<String, Object> getModelAndViewMappingInfos() {
-		return mappingInfoForViewStorage;
+
+	private void removeHandler(String url) {
+		handlerMappingStorage.remove(url);
+	}
+
+	private void removeHandlerWithView(String url) {
+		handlerWithViewMappingInfoStorage.remove(url);
+		viewNameMappingInfoStorage.remove(url);
 	}
 
 }

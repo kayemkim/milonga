@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.skp.milonga.rhino.AtmosRequestMappingInfoStorage;
+import com.skp.milonga.rhino.HandlerMappingInfoStorage;
 import com.skp.milonga.rhino.debug.RhinoDebuggerFactory;
 
 public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapping {
@@ -34,7 +35,7 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 	/*
 	 * storage of url-handler mapping infos
 	 */
-	private AtmosRequestMappingInfoStorage requestMappingInfo;
+	private HandlerMappingInfoStorage handlerMappingInfos;
 
 	/*
 	 * Atmos library file stream.
@@ -71,10 +72,10 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 		
 		try {
 			registerNativeFunctionHandlers(
-					requestMappingInfo.getResponseBodyMappingInfos(),
+					handlerMappingInfos.getHandlerMappingInfos(),
 					NativeFunctionResponseBodyHandler.class);
 			registerNativeFunctionHandlers(
-					requestMappingInfo.getModelAndViewMappingInfos(),
+					handlerMappingInfos.getHandlerWithViewMappingInfos(),
 					NativeFunctionModelAndViewHandler.class);
 			
 		} catch(Exception e) {
@@ -104,7 +105,7 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 					getApplicationContext().getType((String) atmosHandler) : atmosHandler.getClass();
 			
 			if(atmosHandler instanceof NativeFunctionModelAndViewHandler) {
-				((NativeFunctionModelAndViewHandler) atmosHandler).setViewName(requestMappingInfo.getViewName(url));
+				((NativeFunctionModelAndViewHandler) atmosHandler).setViewName(handlerMappingInfos.getViewName(url));
 			}
 					
 			final Class<?> userType = ClassUtils.getUserClass(handlerType);
@@ -164,7 +165,7 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 					if (jsFile.isFile()) {
 						FileReader reader = new FileReader(jsFile);
 
-						AtmosRequestMappingInfoStorage armiStorage = WebApplicationContextUtils
+						HandlerMappingInfoStorage armiStorage = WebApplicationContextUtils
 								.getWebApplicationContext(getServletContext())
 								.getBean(AtmosRequestMappingInfoStorage.class);
 						global.defineProperty("mappingInfo", armiStorage, 0);
@@ -211,8 +212,8 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 	/**
 	 * Setter of requestMappingInfo
 	 */
-	public void setRequestMappingInfo(AtmosRequestMappingInfoStorage requestMappingInfo) {
-		this.requestMappingInfo = requestMappingInfo;
+	public void setRequestMappingInfo(HandlerMappingInfoStorage requestMappingInfo) {
+		this.handlerMappingInfos = requestMappingInfo;
 	}
 
 	/**
