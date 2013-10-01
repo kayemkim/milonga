@@ -1,8 +1,6 @@
 package com.skp.milonga.rhino;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,26 +16,6 @@ public class AtmosRequestMappingInfoStorage {
 	Map<String, Object> mappingInfoForViewStorage = new ConcurrentHashMap<String, Object>();
 	
 	Map<String, String> mappingInfoForViewNameStorage = new ConcurrentHashMap<String, String>();
-
-	/**
-	 * Retrieve handler by url
-	 * 
-	 * @param url
-	 * @return
-	 */
-	public Object get(String url) {
-		return mappingInfoStorage.get(url);
-	}
-	
-	/**
-	 * Retrieve handler for view by url
-	 * 
-	 * @param url
-	 * @return
-	 */
-	public Object getHandlerForView(String url) {
-		return mappingInfoForViewStorage.get(url);
-	}
 	
 	public String getViewName(String url) {
 		return mappingInfoForViewNameStorage.get(url);
@@ -74,15 +52,6 @@ public class AtmosRequestMappingInfoStorage {
 	public void removeHandlerForView(String url) {
 		mappingInfoForViewStorage.remove(url);
 		mappingInfoForViewNameStorage.remove(url);
-	}
-
-	/**
-	 * return iterator of Map
-	 * 
-	 * @return
-	 */
-	public Iterator<Entry<String, Object>> iterator() {
-		return mappingInfoStorage.entrySet().iterator();
 	}
 	
 	public Map<String, Object> getResponseBodyMappingInfos() {
