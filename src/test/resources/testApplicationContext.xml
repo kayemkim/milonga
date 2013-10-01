@@ -38,14 +38,7 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<!-- <beans:bean class="com.skp.milonga.servlet.handler.AtmosUrlHandlerMapping">
-		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfo" />
-		<beans:property name="atmosLibraryLocation" value="WEB-INF/js/atmos" />
-		<beans:property name="userSourceLocation" value="WEB-INF/js-test" />
-		<beans:property name="functionChecker" ref="atmosFunctionChecker"/>
-	</beans:bean> -->
 	<beans:bean class="com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping">
-		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfoStorage" />
 		<beans:property name="userSourceLocation" value="WEB-INF/js-test" />
 	</beans:bean>
 	
@@ -60,9 +53,5 @@
 	
 	<!-- HandlerAdapter for handling simple request and response -->
 	<!-- <beans:bean class="com.skp.milonga.servlet.handler.AtmosHandlerAdapter" /> -->
-	
-	<beans:bean id="atmosRequestMappingInfoStorage" class="com.skp.milonga.rhino.AtmosRequestMappingInfoStorage"/>
-	
-	<context:component-scan base-package="com.skp.milonga" />
 	
 </beans:beans>

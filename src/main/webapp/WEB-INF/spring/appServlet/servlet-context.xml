@@ -32,7 +32,6 @@
 	</beans:bean> -->
 	
 	<beans:bean class="com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping">
-		<beans:property name="requestMappingInfo" ref="atmosRequestMappingInfoStorage" />
 		<beans:property name="userSourceLocation" value="WEB-INF/js" />
 	</beans:bean>
 	
@@ -84,9 +83,7 @@
 	
 	<default-servlet-handler />
 	<!-- Enable pretty-print on the Jackson Http Message convertor -->
-	<beans:bean class="com.skp.milonga.MvcConfiguringPostProcessor" />
-	
-	<beans:bean id="atmosRequestMappingInfoStorage" class="com.skp.milonga.rhino.AtmosRequestMappingInfoStorage"/>
+	<!-- <beans:bean class="com.skp.milonga.MvcConfiguringPostProcessor" /> -->
 	
 	<context:component-scan base-package="com.skp.milonga" />
 	

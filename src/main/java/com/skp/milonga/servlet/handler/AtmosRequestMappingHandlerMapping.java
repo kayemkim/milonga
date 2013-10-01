@@ -19,12 +19,11 @@ import org.mozilla.javascript.debug.Debugger;
 import org.mozilla.javascript.tools.debugger.Dim;
 import org.mozilla.javascript.tools.shell.Global;
 import org.springframework.util.ClassUtils;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import com.skp.milonga.rhino.AtmosRequestMappingInfoStorage;
+import com.skp.milonga.config.MilongaConfig;
 import com.skp.milonga.rhino.HandlerMappingInfoStorage;
 import com.skp.milonga.rhino.debug.RhinoDebuggerFactory;
 
@@ -35,7 +34,7 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 	/*
 	 * storage of url-handler mapping infos
 	 */
-	private HandlerMappingInfoStorage handlerMappingInfos;
+	private HandlerMappingInfoStorage handlerMappingInfos = new MilongaConfig().atmosRequestMappingInfoStorage();
 
 	/*
 	 * Atmos library file stream.
@@ -165,10 +164,7 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 					if (jsFile.isFile()) {
 						FileReader reader = new FileReader(jsFile);
 
-						HandlerMappingInfoStorage armiStorage = WebApplicationContextUtils
-								.getWebApplicationContext(getServletContext())
-								.getBean(AtmosRequestMappingInfoStorage.class);
-						global.defineProperty("mappingInfo", armiStorage, 0);
+						global.defineProperty("mappingInfo", handlerMappingInfos, 0);
 
 						cx.evaluateReader(global, reader, fileName, 1, null);
 					}
@@ -212,8 +208,8 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 	/**
 	 * Setter of requestMappingInfo
 	 */
-	public void setRequestMappingInfo(HandlerMappingInfoStorage requestMappingInfo) {
-		this.handlerMappingInfos = requestMappingInfo;
+	public void setHandlerMappingInfos(HandlerMappingInfoStorage handlerMappingInfos) {
+		this.handlerMappingInfos = handlerMappingInfos;
 	}
 
 	/**
