@@ -1,4 +1,4 @@
-package com.skp.milonga.rhino;
+package com.skp.milonga.servlet.handler;
 
 import java.util.Map;
 

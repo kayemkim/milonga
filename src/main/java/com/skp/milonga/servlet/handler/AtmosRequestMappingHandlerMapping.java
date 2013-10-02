@@ -24,17 +24,18 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.skp.milonga.config.MilongaConfig;
-import com.skp.milonga.rhino.HandlerMappingInfoStorage;
 import com.skp.milonga.rhino.debug.RhinoDebuggerFactory;
 
-public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapping {
-	
+public class AtmosRequestMappingHandlerMapping extends
+		RequestMappingHandlerMapping {
+
 	public static final String ATMOS_JS_FILE_NAME = "atmos.js";
-	
+
 	/*
 	 * storage of url-handler mapping infos
 	 */
-	private HandlerMappingInfoStorage handlerMappingInfos = new MilongaConfig().atmosRequestMappingInfoStorage();
+	private HandlerMappingInfoStorage handlerMappingInfos = new MilongaConfig()
+			.atmosRequestMappingInfoStorage();
 
 	/*
 	 * Atmos library file stream.
@@ -46,8 +47,7 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 	 * Location of user-scripting javascript files. This should be directory.
 	 */
 	private String userSourceLocation;
-	
-	
+
 	@Override
 	protected void initHandlerMethods() {
 		if (logger.isDebugEnabled()) {
@@ -59,16 +59,15 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 
 		handlerMethodsInitialized(getHandlerMethods());
 	}
-	
-	
+
 	/**
-	 * read user-defined javascript files in configured directory,
-	 * and register handler methods in those files as Spring MVC handler.
+	 * read user-defined javascript files in configured directory, and register
+	 * handler methods in those files as Spring MVC handler.
 	 */
 	protected void detectHandlerMethods() {
-		
+
 		processAtmostRequestMappingInfo();
-		
+
 		try {
 			registerNativeFunctionHandlers(
 					handlerMappingInfos.getHandlerMappingInfos(),
@@ -76,14 +75,15 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 			registerNativeFunctionHandlers(
 					handlerMappingInfos.getHandlerWithViewMappingInfos(),
 					NativeFunctionModelAndViewHandler.class);
-			
-		} catch(Exception e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * register
+	 * 
 	 * @param mappingInfos
 	 * @param handlerClassType
 	 * @throws SecurityException
@@ -93,38 +93,39 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 			Map<String, Object> mappingInfos,
 			Class<? extends AbstractNativeFunctionHandler> handlerClassType)
 			throws SecurityException, NoSuchMethodException {
-		
-		Iterator<Entry<String, Object>> iterator = mappingInfos.entrySet().iterator();
-		
+
+		Iterator<Entry<String, Object>> iterator = mappingInfos.entrySet()
+				.iterator();
+
 		while (iterator.hasNext()) {
 			String url = iterator.next().getKey();
-			NativeFunction atmosFunction = (NativeFunction) mappingInfos.get(url);
+			NativeFunction atmosFunction = (NativeFunction) mappingInfos
+					.get(url);
 			Object atmosHandler = getHandler(atmosFunction, handlerClassType);
-			Class<?> handlerType = (atmosHandler instanceof String) ?
-					getApplicationContext().getType((String) atmosHandler) : atmosHandler.getClass();
-			
-			if(atmosHandler instanceof NativeFunctionModelAndViewHandler) {
-				((NativeFunctionModelAndViewHandler) atmosHandler).setViewName(handlerMappingInfos.getViewName(url));
+			Class<?> handlerType = (atmosHandler instanceof String) ? getApplicationContext()
+					.getType((String) atmosHandler) : atmosHandler.getClass();
+
+			if (atmosHandler instanceof NativeFunctionModelAndViewHandler) {
+				((NativeFunctionModelAndViewHandler) atmosHandler)
+						.setViewName(handlerMappingInfos.getViewName(url));
 			}
-					
+
 			final Class<?> userType = ClassUtils.getUserClass(handlerType);
-			
+
 			Method method = userType.getMethod(
 					AbstractNativeFunctionHandler.HANDLER_METHOD_NAME,
 					HttpServletRequest.class, HttpServletResponse.class);
-			RequestMappingInfo mapping = new RequestMappingInfo(new PatternsRequestCondition(url),
-					/*new RequestMethodsRequestCondition(RequestMethod.GET)*/null,
-					null,
-					null,
-					null,
-					/*new ProducesRequestCondition("application/xml")*/null,
+			RequestMappingInfo mapping = new RequestMappingInfo(
+					new PatternsRequestCondition(url),
+					/* new RequestMethodsRequestCondition(RequestMethod.GET) */null,
+					null, null, null,
+					/* new ProducesRequestCondition("application/xml") */null,
 					null);
-			
+
 			registerHandlerMethod(atmosHandler, method, mapping);
 		}
 	}
-	
-	
+
 	/**
 	 * Process all user scripting javascript files in configured location, then
 	 * url-handler mapping infos gotta be stored in memory.
@@ -135,9 +136,11 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 		Global global = new Global(cx);
 
 		// javascript library loading
-		/*List<String> modulePath = new ArrayList<String>();
-		modulePath.add(getServletContextPath() + atmosLibraryLocation);
-		global.installRequire(cx, modulePath, false);*/
+		/*
+		 * List<String> modulePath = new ArrayList<String>();
+		 * modulePath.add(getServletContextPath() + atmosLibraryLocation);
+		 * global.installRequire(cx, modulePath, false);
+		 */
 
 		try {
 			// optimization level -1 means interpret mode
@@ -146,8 +149,7 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 			cx.setDebugger(debugger, new Dim.ContextData());
 
 			InputStreamReader isr = new InputStreamReader(atmosLibraryStream);
-			
-			
+
 			cx.evaluateReader(global, isr, ATMOS_JS_FILE_NAME, 1, null);
 
 			/*
@@ -164,7 +166,8 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 					if (jsFile.isFile()) {
 						FileReader reader = new FileReader(jsFile);
 
-						global.defineProperty("mappingInfo", handlerMappingInfos, 0);
+						global.defineProperty("mappingInfo",
+								handlerMappingInfos, 0);
 
 						cx.evaluateReader(global, reader, fileName, 1, null);
 					}
@@ -179,7 +182,6 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 		return getServletContext().getRealPath("/") + "/";
 	}
 
-	
 	/**
 	 * Convert Javascript function to Spring handler and return it.
 	 * 
@@ -208,7 +210,8 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 	/**
 	 * Setter of requestMappingInfo
 	 */
-	public void setHandlerMappingInfos(HandlerMappingInfoStorage handlerMappingInfos) {
+	public void setHandlerMappingInfos(
+			HandlerMappingInfoStorage handlerMappingInfos) {
 		this.handlerMappingInfos = handlerMappingInfos;
 	}
 
@@ -217,6 +220,6 @@ public class AtmosRequestMappingHandlerMapping extends RequestMappingHandlerMapp
 	 */
 	public void setUserSourceLocation(String userSourceLocation) {
 		this.userSourceLocation = userSourceLocation;
-	}	
-	
+	}
+
 }
