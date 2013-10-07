@@ -21,7 +21,7 @@ public class AtmosRequest extends NativeObject {
 
 	private static final long serialVersionUID = -3554241802444383767L;
 	
-	private ServletWebRequest servletWebRequest;
+	private transient ServletWebRequest servletWebRequest;
 
 	public AtmosRequest(ServletWebRequest servletWebRequest) {
 		super();
