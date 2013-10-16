@@ -61,7 +61,7 @@ Atmos.handler('/login', function(req, res) {
 		} else {
 			loginResult.result = "succeeded";
 			// Redirect
-			res.redirect = '/blog';
+			res.redirect('/blog');
 		}
 	} else {
 		loginResult.result = "not available";

@@ -24,6 +24,7 @@
 	
 	<beans:bean class="com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping">
 		<beans:property name="userSourceLocation" value="WEB-INF/js-test" />
+		<beans:property name="configFileLocation" value="WEB-INF/config/milonga.xml" />
 	</beans:bean>
 	
 	<!-- <beans:bean id="atmosFunctionChecker" class="com.skp.milonga.servlet.checker.AtmosFunctionChecker">

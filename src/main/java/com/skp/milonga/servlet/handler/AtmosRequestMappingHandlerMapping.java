@@ -47,6 +47,8 @@ public class AtmosRequestMappingHandlerMapping extends
 	 * Location of user-scripting javascript files. This should be directory.
 	 */
 	private String userSourceLocation;
+	
+	private String configFileLocation;
 
 	@Override
 	protected void initHandlerMethods() {
@@ -220,6 +222,11 @@ public class AtmosRequestMappingHandlerMapping extends
 	 */
 	public void setUserSourceLocation(String userSourceLocation) {
 		this.userSourceLocation = userSourceLocation;
+	}
+	
+	
+	public void setConfigFileLocation(String configFileLocation) {
+		this.configFileLocation = configFileLocation;
 	}
 
 }

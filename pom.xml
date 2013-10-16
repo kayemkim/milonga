@@ -6,13 +6,27 @@
 	<artifactId>milonga</artifactId>
 	<name>milonga</name>
 	<packaging>jar</packaging>
-	<version>0.9.0-BUILD-SNAPSHOT</version>
+	<version>0.9.0</version>
 	<properties>
 		<java-version>1.6</java-version>
 		<org.springframework-version>3.2.3.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
+	
+	<distributionManagement>
+        <repository>
+            <id>skp-releases</id>
+            <name>skp-releases</name>
+            <url>http://mvn.skplanet.com/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>skp-snapshots</id>
+            <name>skp-snapshots</name>
+            <url>http://mvn.skplanet.com/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
 	<repositories>
 		<repository>
     		<id>spring-milestone</id>
