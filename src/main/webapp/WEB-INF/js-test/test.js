@@ -84,3 +84,7 @@ Atmos.url('/jsStyleBinding/{foo}/{foo2}').define(function() {
 Atmos.url('/jsStyleJavaObjectBinding').define(function(req) {
 	return req.bindAs('com.skp.milonga.rhino.Player');
 });
+
+Atmos.handler('/redirectTest', function(req, res) {
+	
+}).redirect('http://www.google.com');

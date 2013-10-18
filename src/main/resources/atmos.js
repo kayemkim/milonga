@@ -98,6 +98,14 @@ Handler.prototype = {
 	 */
 	toView: function(viewName) {
 		Atmos.defineView(this.url, this.process, viewName);
-	}
+	},
+	
+	redirect: function(viewName) {
+		Atmos.defineView(this.url, this.process, 'redirect:' + viewName);
+	},
+	
+	forward: function(viewName) {
+		Atmos.defineView(this.url, this.process, 'forward:' + viewName);
+	} 
 };
 

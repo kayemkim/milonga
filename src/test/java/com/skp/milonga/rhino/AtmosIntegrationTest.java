@@ -124,4 +124,13 @@ public class AtmosIntegrationTest {
 				.andExpect(status().isOk())
 				.andExpect(content().string("{\"playerName\":\"Wright\"}"));
 	}
+	
+	
+	@Test
+	public void redirectTest() throws Exception {
+		mockMvc.perform(
+				get("/redirectTest"))
+				.andExpect(status().isOk())
+				.andExpect(redirectedUrl("http://www.google.com"));
+	}
 }

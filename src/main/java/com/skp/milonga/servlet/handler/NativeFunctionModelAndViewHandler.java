@@ -32,14 +32,7 @@ public class NativeFunctionModelAndViewHandler extends
 
 		ModelAndView mv = new ModelAndView();
 
-		if (result instanceof Undefined) {
-			// request attributes to Model
-			Enumeration<String> attributeNames = request.getAttributeNames();
-			while (attributeNames.hasMoreElements()) {
-				String attributeName = attributeNames.nextElement();
-				mv.addObject(attributeName, request.getAttribute(attributeName));
-			}
-		} else if (result instanceof NativeObject) {
+		if (result instanceof NativeObject) {
 			// in case that return type is Javascript object
 			Iterator<Entry<Object, Object>> i = ((NativeObject) result)
 					.entrySet().iterator();
