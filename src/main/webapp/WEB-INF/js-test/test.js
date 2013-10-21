@@ -13,9 +13,7 @@ Atmos.handler('/pathvariable/{varName}', function() {
  */
 Atmos.handler('/binding', function(req) {
 	var data = req.bindAs('com.skp.milonga.rhino.Player');
-	var result = new Object();
-	result['playerName'] = data.getPlayerName();
-	return result;
+	return data;
 }).toView();
 
 
