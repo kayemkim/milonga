@@ -2,17 +2,31 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.km</groupId>
+	<groupId>com.skp</groupId>
 	<artifactId>milonga</artifactId>
 	<name>milonga</name>
-	<packaging>war</packaging>
-	<version>1.0.0-BUILD-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<version>0.9.0</version>
 	<properties>
 		<java-version>1.6</java-version>
 		<org.springframework-version>3.2.3.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
+	
+	<distributionManagement>
+        <repository>
+            <id>skp-releases</id>
+            <name>skp-releases</name>
+            <url>http://mvn.skplanet.com/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>skp-snapshots</id>
+            <name>skp-snapshots</name>
+            <url>http://mvn.skplanet.com/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
 	<repositories>
 		<repository>
     		<id>spring-milestone</id>
@@ -133,13 +147,6 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<!-- Rhino -->
-		<dependency>
-			<groupId>org.mozilla</groupId>
-			<artifactId>rhino</artifactId>
-			<version>1.7R4</version>
-		</dependency>
-		
 		<!-- Spring Test MVC -->
 		<dependency>
   			<groupId>org.springframework</groupId>
@@ -148,79 +155,18 @@
   			<scope>test</scope>
 		</dependency>
 		
+		<!-- Rhino -->
+		<dependency>
+			<groupId>org.mozilla</groupId>
+			<artifactId>rhino</artifactId>
+			<version>1.7R4</version>
+		</dependency>
+		
 		<!-- Jackson -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.9.10</version>
-		</dependency>
-		
-		<!-- Scalate -->
-		<dependency>
-			<groupId>org.fusesource.scalate</groupId>
-			<artifactId>scalate-core_2.10</artifactId>
-			<version>1.6.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.fusesource.scalate</groupId>
-			<artifactId>scalate-spring-mvc_2.10</artifactId>
-			<version>1.6.1</version>
-		</dependency>
-		
-		<!-- <dependency>
-    		<groupId>org.springframework.scala</groupId>
-    		<artifactId>spring-scala</artifactId>
-    		<version>1.0.0.M2</version>
-		</dependency> -->
-		
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-library</artifactId>
-			<version>2.10.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-reflect</artifactId>
-			<version>2.10.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-compiler</artifactId>
-			<version>2.10.2</version>
-		</dependency>
-		
-		<!-- apache-commons-beanutils -->
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.8.3</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.ctlok</groupId>
-			<artifactId>spring-webmvc-rythm</artifactId>
-			<version>1.3.0</version>
-		</dependency>
-		
-		<dependency>
-	        <groupId>com.github.ericdwhite</groupId>
-	        <artifactId>mustache.java-spring-webmvc</artifactId>
-	        <version>0.9.3-SNAPSHOT</version>
-	    </dependency>
-	    
-	    <!-- converting xml -->
-	    <dependency>
-  			<groupId>org.springframework</groupId>
-  			<artifactId>spring-oxm</artifactId>
-  			<version>${org.springframework-version}</version>
-		</dependency>
-		
-		<!-- javassist -->
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.18.0-GA</version>
 		</dependency>
 	</dependencies>
     <build>
