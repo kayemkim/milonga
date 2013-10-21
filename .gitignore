@@ -1,10 +1,20 @@
+# genenral
+.*
+*~
+!.gitignore
+
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.bak
+
+# classes
 *.class
 target
-.project
-.settings
-.classpath
 
-# Package Files #
+# package
 *.jar
 *.war
 *.ear

@@ -2,22 +2,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.km</groupId>
+	<groupId>com.skp</groupId>
 	<artifactId>milonga</artifactId>
 	<name>milonga</name>
-	<packaging>war</packaging>
-	<version>1.0.0-BUILD-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<version>0.1.1</version>
 	<properties>
 		<java-version>1.6</java-version>
 		<org.springframework-version>3.2.3.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
+	
+	<distributionManagement>
+        <repository>
+            <id>skp-releases</id>
+            <name>skp-releases</name>
+            <url>http://mvn.skplanet.com/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>skp-snapshots</id>
+            <name>skp-snapshots</name>
+            <url>http://mvn.skplanet.com/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
 	<repositories>
 		<repository>
     		<id>spring-milestone</id>
     		<name>Spring Portfolio Milestone Repository</name>
     		<url>http://repo.springsource.org/milestone</url>
+		</repository>
+		<repository>
+    		<id>repository.springsource.milestone</id>
+    		<name>SpringSource Milestone Repository</name>
+    		<url>http://repo.springsource.org/milestone</url>
+		</repository>
+		<repository>
+			<id>Sonatype Snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -124,6 +147,14 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- Spring Test MVC -->
+		<dependency>
+  			<groupId>org.springframework</groupId>
+  			<artifactId>spring-test-mvc</artifactId>
+  			<version>1.0.0.M2</version>
+  			<scope>test</scope>
+		</dependency>
+		
 		<!-- Rhino -->
 		<dependency>
 			<groupId>org.mozilla</groupId>
@@ -131,12 +162,11 @@
 			<version>1.7R4</version>
 		</dependency>
 		
-		<!-- Spring Test MVC -->
+		<!-- Jackson -->
 		<dependency>
-  			<groupId>org.springframework</groupId>
-  			<artifactId>spring-test-mvc</artifactId>
-  			<version>1.0.0.M2</version>
-  			<scope>test</scope>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.10</version>
 		</dependency>
 	</dependencies>
     <build>
