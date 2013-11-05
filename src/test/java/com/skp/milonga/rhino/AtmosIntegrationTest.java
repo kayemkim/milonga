@@ -10,6 +10,9 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.r
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.view;
 
+import java.io.File;
+import java.io.FileWriter;
+
 import javax.annotation.Resource;
 
 import org.junit.Before;
@@ -22,6 +25,7 @@ import org.springframework.test.web.server.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.skp.milonga.rhino.mvctest.WebContextLoader;
+import com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping;
 
 /**
  * Milonga Integration Test 
@@ -48,14 +52,6 @@ public class AtmosIntegrationTest {
 	public void setup() {
 		mockMvc = MockMvcBuilders.webApplicationContextSetup(
 				webApplicationContext).build();
-	}
-
-	@Test
-	public void connectTestUrl() throws Exception {
-		mockMvc.perform(get("/platform")).andExpect(status().isOk())
-				.andExpect(view().name("platform"))
-				.andExpect(forwardedUrl("/WEB-INF/views/platform.jsp"))
-				.andExpect(model().attribute("platform", "Atmos Code"));
 	}
 	
 	
@@ -132,5 +128,39 @@ public class AtmosIntegrationTest {
 				get("/redirectTest"))
 				.andExpect(status().isOk())
 				.andExpect(redirectedUrl("http://www.google.com"));
+	}
+	
+	@Test
+	public void refreshJavascript() throws Exception {
+		mockMvc.perform(get("/platform")).andExpect(status().isOk())
+				.andExpect(view().name("platform"))
+				.andExpect(forwardedUrl("/WEB-INF/views/platform.jsp"))
+				.andExpect(model().attribute("platform", "Atmos Code"));
+		
+		// new js file added
+		String locationOfFileToWrite = new File(".").getAbsolutePath()
+				+ "/src/main/webapp/"
+				+ webApplicationContext.getBean(
+						AtmosRequestMappingHandlerMapping.class)
+						.getUserSourceLocation() + "/test2.js";
+		FileWriter writer = new FileWriter(locationOfFileToWrite);
+		writer.write("Atmos.handler('/test', function() { return 'test'; });");
+		writer.flush();
+		writer.close();
+		
+		Thread.sleep(10000);
+		
+		mockMvc.perform(get("/platform")).andExpect(status().isOk())
+				.andExpect(view().name("platform"))
+				.andExpect(forwardedUrl("/WEB-INF/views/platform.jsp"))
+				.andExpect(model().attribute("platform", "Atmos Code"));
+		
+		// check if new handler is registered
+		mockMvc.perform(get("/test")).andExpect(status().isOk())
+				.andExpect(content().string("test"));
+		
+		// delete new js file
+		File fileToWrite = new File(locationOfFileToWrite);
+		fileToWrite.delete();
 	}
 }
