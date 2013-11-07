@@ -30,8 +30,6 @@ public class JsSourceWatcher extends WebApplicationObjectSupport implements
 	private final Map<WatchKey, Path> keys;
 	private boolean trace = false;
 
-	private AtmosRequestMappingHandlerMapping handlerMapping;
-
 	@SuppressWarnings("unchecked")
 	public static <T> WatchEvent<T> cast(WatchEvent<?> event) {
 		return (WatchEvent<T>) event;
@@ -40,10 +38,8 @@ public class JsSourceWatcher extends WebApplicationObjectSupport implements
 	/**
 	 * Creates a WatchService and registers the given directory
 	 */
-	public JsSourceWatcher(Path dir, boolean recursive,
-			AtmosRequestMappingHandlerMapping handlerMapping)
+	public JsSourceWatcher(Path dir, boolean recursive)
 			throws IOException {
-		this.handlerMapping = handlerMapping;
 		this.watcher = FileSystems.getDefault().newWatchService();
 		this.keys = new HashMap<WatchKey, Path>();
 
@@ -127,6 +123,8 @@ public class JsSourceWatcher extends WebApplicationObjectSupport implements
 
 	@SuppressWarnings("unchecked")
 	private void reRegisterHandlerMethods() {
+		AtmosRequestMappingHandlerMapping handlerMapping = getApplicationContext()
+				.getBean(AtmosRequestMappingHandlerMapping.class);
 		try {
 			Field fieldHandlerMethods = AbstractHandlerMethodMapping.class
 					.getDeclaredField("handlerMethods");

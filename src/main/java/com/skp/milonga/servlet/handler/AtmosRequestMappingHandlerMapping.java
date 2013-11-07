@@ -21,6 +21,7 @@ import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.debug.Debugger;
 import org.mozilla.javascript.tools.debugger.Dim;
 import org.mozilla.javascript.tools.shell.Global;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
@@ -236,7 +237,9 @@ public class AtmosRequestMappingHandlerMapping extends
 		
 		SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
 		try {
-			executor.execute(new JsSourceWatcher(dir, false, this));
+			JsSourceWatcher jsSourceWatcher = new JsSourceWatcher(dir, false);
+			jsSourceWatcher.setApplicationContext(getApplicationContext());
+			executor.execute(jsSourceWatcher);
 		} catch (IOException e) {
 			logger.error(
 					"[Milonga] Launching javascript source watcher is failed. Interpreter mode is not available.",
