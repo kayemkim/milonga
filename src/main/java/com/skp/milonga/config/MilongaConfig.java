@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping;
 import com.skp.milonga.servlet.handler.AtmosRequestMappingInfoStorage;
 import com.skp.milonga.servlet.handler.HandlerMappingInfoStorage;
 
@@ -16,10 +15,4 @@ public class MilongaConfig extends WebMvcConfigurerAdapter {
 		return new AtmosRequestMappingInfoStorage();
 	}
 	
-	@Bean(name="atmosRequestMappingHandlerMapping")
-	public AtmosRequestMappingHandlerMapping atmosRequestMappingHandlerMapping() {
-		AtmosRequestMappingHandlerMapping handlerMapping = new AtmosRequestMappingHandlerMapping();
-		handlerMapping.setUserSourceLocation("WEB-INF/js-test");
-		return handlerMapping;
-	}
 }

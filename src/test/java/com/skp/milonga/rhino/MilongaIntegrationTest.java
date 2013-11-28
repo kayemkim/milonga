@@ -41,7 +41,7 @@ import com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = WebContextLoader.class, locations = { "classpath:testApplicationContext.xml" })
-public class AtmosIntegrationTest {
+public class MilongaIntegrationTest {
 
 	@Resource
 	private WebApplicationContext webApplicationContext;

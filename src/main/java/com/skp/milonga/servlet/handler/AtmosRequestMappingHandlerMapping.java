@@ -2,13 +2,10 @@ package com.skp.milonga.servlet.handler;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,20 +13,23 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.VFS;
+import org.apache.commons.vfs2.impl.DefaultFileMonitor;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.debug.Debugger;
 import org.mozilla.javascript.tools.debugger.Dim;
 import org.mozilla.javascript.tools.shell.Global;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.skp.milonga.config.MilongaConfig;
-import com.skp.milonga.interpret.JsSourceWatcher;
+import com.skp.milonga.interpret.JsUserFileListener;
 import com.skp.milonga.rhino.debug.RhinoDebuggerFactory;
 
 public class AtmosRequestMappingHandlerMapping extends
@@ -69,7 +69,7 @@ public class AtmosRequestMappingHandlerMapping extends
 
 		handlerMethodsInitialized(getHandlerMethods());
 		
-		launchJsSourceWatcher();
+		launchJsFileMonitor();
 	}
 	
 	public void reInitHandlerMethods() {
@@ -232,15 +232,19 @@ public class AtmosRequestMappingHandlerMapping extends
 		return handler;
 	}
 	
-	private void launchJsSourceWatcher() {
-		Path dir = Paths.get(getServletContextPath() + userSourceLocation);
-		
-		SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
+	private void launchJsFileMonitor() {
 		try {
-			JsSourceWatcher jsSourceWatcher = new JsSourceWatcher(dir, false);
-			jsSourceWatcher.setApplicationContext(getApplicationContext());
-			executor.execute(jsSourceWatcher);
-		} catch (IOException e) {
+			FileSystemManager fsManager = VFS.getManager();
+			FileObject listenDir = fsManager.resolveFile(getServletContextPath() + userSourceLocation);
+			JsUserFileListener fileListener = new JsUserFileListener();
+			fileListener.setApplicationContext(getApplicationContext());
+			DefaultFileMonitor fileMonitor = new DefaultFileMonitor(fileListener);
+			
+			fileMonitor.setRecursive(true);
+			fileMonitor.addFile(listenDir);
+			fileMonitor.start();
+			
+		} catch (FileSystemException e) {
 			logger.error(
 					"[Milonga] Launching javascript source watcher is failed. Interpreter mode is not available.",
 					e);
