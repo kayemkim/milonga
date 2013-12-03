@@ -14,4 +14,5 @@ public class MilongaConfig extends WebMvcConfigurerAdapter {
 	public HandlerMappingInfoStorage atmosRequestMappingInfoStorage() {
 		return new AtmosRequestMappingInfoStorage();
 	}
+	
 }

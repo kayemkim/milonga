@@ -13,6 +13,11 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.VFS;
+import org.apache.commons.vfs2.impl.DefaultFileMonitor;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.debug.Debugger;
@@ -24,6 +29,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.skp.milonga.config.MilongaConfig;
+import com.skp.milonga.interpret.JsUserFileListener;
 import com.skp.milonga.rhino.debug.RhinoDebuggerFactory;
 
 public class AtmosRequestMappingHandlerMapping extends
@@ -34,7 +40,7 @@ public class AtmosRequestMappingHandlerMapping extends
 	/*
 	 * storage of url-handler mapping infos
 	 */
-	private HandlerMappingInfoStorage handlerMappingInfos = new MilongaConfig()
+	private HandlerMappingInfoStorage handlerMappingInfoStorage = new MilongaConfig()
 			.atmosRequestMappingInfoStorage();
 
 	/*
@@ -49,6 +55,8 @@ public class AtmosRequestMappingHandlerMapping extends
 	private String userSourceLocation;
 	
 	private String configFileLocation;
+	
+	private Debugger debugger;
 
 	@Override
 	protected void initHandlerMethods() {
@@ -60,6 +68,14 @@ public class AtmosRequestMappingHandlerMapping extends
 		detectHandlerMethods();
 
 		handlerMethodsInitialized(getHandlerMethods());
+		
+		launchJsFileMonitor();
+	}
+	
+	public void reInitHandlerMethods() {
+		detectHandlerMethods();
+		handlerMethodsInitialized(getHandlerMethods());
+		logger.info("[Milonga] Refreshing Javascript source is done. All handler methods re-registered.");
 	}
 
 	/**
@@ -72,10 +88,10 @@ public class AtmosRequestMappingHandlerMapping extends
 
 		try {
 			registerNativeFunctionHandlers(
-					handlerMappingInfos.getHandlerMappingInfos(),
+					handlerMappingInfoStorage.getHandlerMappingInfos(),
 					NativeFunctionResponseBodyHandler.class);
 			registerNativeFunctionHandlers(
-					handlerMappingInfos.getHandlerWithViewMappingInfos(),
+					handlerMappingInfoStorage.getHandlerWithViewMappingInfos(),
 					NativeFunctionModelAndViewHandler.class);
 
 		} catch (Exception e) {
@@ -109,7 +125,7 @@ public class AtmosRequestMappingHandlerMapping extends
 
 			if (atmosHandler instanceof NativeFunctionModelAndViewHandler) {
 				((NativeFunctionModelAndViewHandler) atmosHandler)
-						.setViewName(handlerMappingInfos.getViewName(url));
+						.setViewName(handlerMappingInfoStorage.getViewName(url));
 			}
 
 			final Class<?> userType = ClassUtils.getUserClass(handlerType);
@@ -127,7 +143,7 @@ public class AtmosRequestMappingHandlerMapping extends
 			registerHandlerMethod(atmosHandler, method, mapping);
 		}
 	}
-
+	
 	/**
 	 * Process all user scripting javascript files in configured location, then
 	 * url-handler mapping infos gotta be stored in memory.
@@ -147,8 +163,14 @@ public class AtmosRequestMappingHandlerMapping extends
 		try {
 			// optimization level -1 means interpret mode
 			cx.setOptimizationLevel(-1);
-			Debugger debugger = RhinoDebuggerFactory.create();
+			if (debugger == null) {
+				debugger = RhinoDebuggerFactory.create();
+			}
+			//Debugger debugger = RhinoDebuggerFactory.create();
 			cx.setDebugger(debugger, new Dim.ContextData());
+			
+			atmosLibraryStream = getClass().getClassLoader()
+					.getResourceAsStream(ATMOS_JS_FILE_NAME);
 
 			InputStreamReader isr = new InputStreamReader(atmosLibraryStream);
 
@@ -169,12 +191,13 @@ public class AtmosRequestMappingHandlerMapping extends
 						FileReader reader = new FileReader(jsFile);
 
 						global.defineProperty("mappingInfo",
-								handlerMappingInfos, 0);
+								handlerMappingInfoStorage, 0);
 
 						cx.evaluateReader(global, reader, fileName, 1, null);
 					}
 				}
 			}
+			atmosLibraryStream.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -208,13 +231,36 @@ public class AtmosRequestMappingHandlerMapping extends
 		}
 		return handler;
 	}
+	
+	private void launchJsFileMonitor() {
+		try {
+			FileSystemManager fsManager = VFS.getManager();
+			FileObject listenDir = fsManager.resolveFile(getServletContextPath() + userSourceLocation);
+			JsUserFileListener fileListener = new JsUserFileListener();
+			fileListener.setApplicationContext(getApplicationContext());
+			DefaultFileMonitor fileMonitor = new DefaultFileMonitor(fileListener);
+			
+			fileMonitor.setRecursive(true);
+			fileMonitor.addFile(listenDir);
+			fileMonitor.start();
+			
+		} catch (FileSystemException e) {
+			logger.error(
+					"[Milonga] Launching javascript source watcher is failed. Interpreter mode is not available.",
+					e);
+		}
+	}
 
 	/**
 	 * Setter of requestMappingInfo
 	 */
-	public void setHandlerMappingInfos(
-			HandlerMappingInfoStorage handlerMappingInfos) {
-		this.handlerMappingInfos = handlerMappingInfos;
+	public void setHandlerMappingInfoStorage(
+			HandlerMappingInfoStorage handlerMappingInfoStorage) {
+		this.handlerMappingInfoStorage = handlerMappingInfoStorage;
+	}
+	
+	public HandlerMappingInfoStorage getHandlerMappingInfoStorage() {
+		return handlerMappingInfoStorage;
 	}
 
 	/**
@@ -222,6 +268,10 @@ public class AtmosRequestMappingHandlerMapping extends
 	 */
 	public void setUserSourceLocation(String userSourceLocation) {
 		this.userSourceLocation = userSourceLocation;
+	}
+	
+	public String getUserSourceLocation() {
+		return userSourceLocation;
 	}
 	
 	
