@@ -2,11 +2,14 @@ package com.skp.milonga.servlet.handler;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -23,6 +26,15 @@ import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.debug.Debugger;
 import org.mozilla.javascript.tools.debugger.Dim;
 import org.mozilla.javascript.tools.shell.Global;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.context.ApplicationContextException;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -57,6 +69,30 @@ public class AtmosRequestMappingHandlerMapping extends
 	private String configFileLocation;
 	
 	private Debugger debugger;
+	
+	public static final String PROPERTYSOURCE_APPCONFIG_NAME = "appConfig";
+	
+	@Override
+	public void afterPropertiesSet() {
+		ConfigurableApplicationContext context = (ConfigurableApplicationContext) getApplicationContext();
+		try {
+            ConfigurableEnvironment environment = context.getEnvironment();
+
+            MutablePropertySources propertySources = environment.getPropertySources();
+
+            List<Resource> resources = new ArrayList<Resource>();
+            resources.add(new ClassPathResource("META-INF/milonga.xml"));
+
+            PropertiesFactoryBean bean = new PropertiesFactoryBean();
+            bean.setLocations(resources.toArray(new Resource[resources.size()]));
+            bean.afterPropertiesSet();
+
+            propertySources.addLast(new PropertiesPropertySource(PROPERTYSOURCE_APPCONFIG_NAME, bean.getObject()));
+        } catch (IOException e) {
+            throw new ApplicationContextException("environment initialization failed!", e);
+        }
+		super.afterPropertiesSet();
+	}
 
 	@Override
 	protected void initHandlerMethods() {
