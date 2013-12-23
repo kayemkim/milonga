@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -240,7 +241,13 @@ public class AtmosRequestMappingHandlerMapping extends
 	}
 
 	private String getServletContextPath() {
-		return getServletContext().getRealPath("/") + "/";
+		String servletContextPath = "";
+		try {
+			servletContextPath = getServletContext().getResource("/").getPath();
+		} catch (Exception e) {
+			logger.error("Could not find servlet context path.", e);
+		}
+		return servletContextPath;
 	}
 
 	/**
