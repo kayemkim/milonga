@@ -2,15 +2,11 @@ package com.skp.milonga.servlet.handler;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -27,21 +23,11 @@ import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.debug.Debugger;
 import org.mozilla.javascript.tools.debugger.Dim;
 import org.mozilla.javascript.tools.shell.Global;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.PropertiesFactoryBean;
-import org.springframework.context.ApplicationContextException;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import com.skp.milonga.config.MilongaConfig;
 import com.skp.milonga.interpret.JsUserFileListener;
 import com.skp.milonga.rhino.debug.RhinoDebuggerFactory;
 
@@ -53,8 +39,7 @@ public class AtmosRequestMappingHandlerMapping extends
 	/*
 	 * storage of url-handler mapping infos
 	 */
-	private HandlerMappingInfoStorage handlerMappingInfoStorage = new MilongaConfig()
-			.atmosRequestMappingInfoStorage();
+	private HandlerMappingInfoStorage handlerMappingInfoStorage = new AtmosRequestMappingInfoStorage();
 
 	/*
 	 * Atmos library file stream.
@@ -67,33 +52,12 @@ public class AtmosRequestMappingHandlerMapping extends
 	 */
 	private String userSourceLocation;
 	
-	private String configFileLocation;
+	/*
+	 * state of source code auto-refreshable
+	 */
+	private boolean autoRefreshable;
 	
 	private Debugger debugger;
-	
-	public static final String PROPERTYSOURCE_APPCONFIG_NAME = "appConfig";
-	
-	@Override
-	public void afterPropertiesSet() {
-		ConfigurableApplicationContext context = (ConfigurableApplicationContext) getApplicationContext();
-		try {
-            ConfigurableEnvironment environment = context.getEnvironment();
-
-            MutablePropertySources propertySources = environment.getPropertySources();
-
-            List<Resource> resources = new ArrayList<Resource>();
-            resources.add(new ClassPathResource("META-INF/milonga.xml"));
-
-            PropertiesFactoryBean bean = new PropertiesFactoryBean();
-            bean.setLocations(resources.toArray(new Resource[resources.size()]));
-            bean.afterPropertiesSet();
-
-            propertySources.addLast(new PropertiesPropertySource(PROPERTYSOURCE_APPCONFIG_NAME, bean.getObject()));
-        } catch (IOException e) {
-            throw new ApplicationContextException("environment initialization failed!", e);
-        }
-		super.afterPropertiesSet();
-	}
 
 	@Override
 	protected void initHandlerMethods() {
@@ -101,13 +65,13 @@ public class AtmosRequestMappingHandlerMapping extends
 			logger.debug("Looking for request mappings in application context: "
 					+ getApplicationContext());
 		}
-
+		
 		detectHandlerMethods();
-
+		
 		handlerMethodsInitialized(getHandlerMethods());
 		
-		launchJsFileMonitor();
-	}
+		processAutoRefresh();
+	}	
 	
 	public void reInitHandlerMethods() {
 		detectHandlerMethods();
@@ -241,13 +205,7 @@ public class AtmosRequestMappingHandlerMapping extends
 	}
 
 	private String getServletContextPath() {
-		String servletContextPath = "";
-		try {
-			servletContextPath = getServletContext().getResource("/").getPath();
-		} catch (Exception e) {
-			logger.error("Could not find servlet context path.", e);
-		}
-		return servletContextPath;
+		return getServletContext().getRealPath("/") + "/";
 	}
 
 	/**
@@ -273,6 +231,15 @@ public class AtmosRequestMappingHandlerMapping extends
 			e.printStackTrace();
 		}
 		return handler;
+	}
+	
+	private void processAutoRefresh() {
+		if (autoRefreshable) {
+			launchJsFileMonitor();
+			logger.info("[Milonga] Javascript code auto-refreshable enabled.");
+		} else {
+			logger.info("[Milonga] Javascript code auto-refreshable disabled.");
+		}
 	}
 	
 	private void launchJsFileMonitor() {
@@ -317,9 +284,8 @@ public class AtmosRequestMappingHandlerMapping extends
 		return userSourceLocation;
 	}
 	
-	
-	public void setConfigFileLocation(String configFileLocation) {
-		this.configFileLocation = configFileLocation;
+	public void setAutoRefreshable(boolean autoRefreshable) {
+		this.autoRefreshable = autoRefreshable;
 	}
 
 }

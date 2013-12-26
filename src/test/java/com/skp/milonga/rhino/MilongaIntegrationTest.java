@@ -1,15 +1,5 @@
 package com.skp.milonga.rhino;
 
-/*import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.cookie;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.forwardedUrl;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.request;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.view;*/
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
@@ -30,11 +20,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-/*import org.springframework.test.web.server.MockMvc;
-import org.springframework.test.web.server.setup.MockMvcBuilders;*/
 import org.springframework.web.context.WebApplicationContext;
 
-import com.skp.milonga.core.EnvironmentInitializer;
 import com.skp.milonga.test.MilongaTestConfig;
 
 /**
@@ -51,8 +38,8 @@ import com.skp.milonga.test.MilongaTestConfig;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = MilongaTestConfig.class, initializers = EnvironmentInitializer.class)
-//@ContextConfiguration(loader = WebContextLoader.class, locations = { "classpath:testApplicationContext.xml" })
+@ContextConfiguration(classes = MilongaTestConfig.class)
+//@ContextConfiguration(/*loader = WebContextLoader.class, */locations = { "classpath:testApplicationContext.xml" })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class MilongaIntegrationTest {
 

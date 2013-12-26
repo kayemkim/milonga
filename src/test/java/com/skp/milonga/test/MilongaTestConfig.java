@@ -35,5 +35,4 @@ public class MilongaTestConfig extends WebMvcConfigurerAdapter {
     	viewResolver.setSuffix(".jsp");
     	return viewResolver;
     }
-
 }
