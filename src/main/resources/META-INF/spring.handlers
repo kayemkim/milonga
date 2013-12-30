@@ -1,1 +1,1 @@
-http\://www.skplanet.com/schema/milonga=com.skp.milonga.config.MilongaNamespaceHandler
+http\://www.skplanet.com/schema/milonga=com.skp.milonga.tag.MilongaNamespaceHandler

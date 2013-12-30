@@ -24,9 +24,13 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<milonga:milonga 
+	<!-- <milonga:milonga 
 		userSourceLocation="WEB-INF/js-test" 
-		autoRefreshable="true" />
+		autoRefreshable="true" /> -->
+	<milonga:milonga>
+		<milonga:location value="WEB-INF/js-test"/>
+		<milonga:autoRefreshable value="true"/>
+	</milonga:milonga>
 	
 	<!-- <beans:bean class="com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping">
 		<beans:property name="userSourceLocation" value="WEB-INF/js-test" />

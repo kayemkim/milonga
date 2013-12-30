@@ -1,4 +1,4 @@
-package com.skp.milonga.rhino;
+package com.skp.milonga.test.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

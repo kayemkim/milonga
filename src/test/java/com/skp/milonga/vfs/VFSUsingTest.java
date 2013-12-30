@@ -1,4 +1,4 @@
-package com.skp.milonga.rhino;
+package com.skp.milonga.vfs;
 
 import java.io.File;
 import java.io.FileWriter;

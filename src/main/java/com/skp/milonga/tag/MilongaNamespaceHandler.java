@@ -1,4 +1,4 @@
-package com.skp.milonga.config;
+package com.skp.milonga.tag;
 
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 

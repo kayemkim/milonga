@@ -1,4 +1,4 @@
-package com.skp.milonga.config;
+package com.skp.milonga.tag;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -7,7 +7,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.util.StringUtils;
+import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 import com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping;
@@ -26,14 +26,18 @@ public class MilongaBeanDefinitionParser implements BeanDefinitionParser {
 				AtmosRequestMappingHandlerMapping.class);
 		handlerMappingDef.setSource(parserContext.extractSource(element));
 		
-		String userSourceLocation = element.getAttribute(PROPERTY_USER_SOURCE_LOCATION);
-		if (StringUtils.isEmpty(userSourceLocation)) {
-			userSourceLocation = DEFAULT_USER_SOURCE_LOCATION;
+		String userSourceLocation = "";
+		Element exclusionElem = DomUtils.getChildElementByTagName(element,
+				"location");
+		if (exclusionElem != null) {
+			userSourceLocation = exclusionElem.getAttribute("value");
 		}
 		
-		String autoRefreshable = element.getAttribute(PROPERTY_AUTO_REFRESHABLE);
-		if (StringUtils.isEmpty(autoRefreshable)) {
-			autoRefreshable = DEFAULT_AUTO_REFRESHABLE;
+		boolean autoRefreshable = false;
+		Element autoRefreshableElem = DomUtils.getChildElementByTagName(
+				element, "autoRefreshable");
+		if (autoRefreshableElem != null) {
+			autoRefreshable = Boolean.parseBoolean(autoRefreshableElem.getAttribute("value"));
 		}
 		
 		handlerMappingDef.getPropertyValues().addPropertyValue(

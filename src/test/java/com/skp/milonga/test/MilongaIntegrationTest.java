@@ -1,4 +1,4 @@
-package com.skp.milonga.rhino;
+package com.skp.milonga.test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -38,8 +38,8 @@ import com.skp.milonga.test.MilongaTestConfig;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = MilongaTestConfig.class)
-//@ContextConfiguration(/*loader = WebContextLoader.class, */locations = { "classpath:testApplicationContext.xml" })
+//@ContextConfiguration(classes = MilongaTestConfig.class)
+@ContextConfiguration(/*loader = WebContextLoader.class, */locations = { "classpath:testApplicationContext.xml" })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class MilongaIntegrationTest {
 
