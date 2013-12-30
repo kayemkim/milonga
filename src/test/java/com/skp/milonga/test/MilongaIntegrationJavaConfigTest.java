@@ -22,27 +22,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.skp.milonga.test.MilongaTestConfig;
-
-/**
- * Milonga Integration Test 
- * 1. read test.js 
- * 2. register url-handler infos into memory 
- * 3. request /test 
- * 4. check the result
- * 
- * This is Spring MVC Test.
- * 
- * @author kminkim
- * 
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-//@ContextConfiguration(classes = MilongaTestConfig.class)
-@ContextConfiguration(/*loader = WebContextLoader.class, */locations = { "classpath:testApplicationContext.xml" })
+@ContextConfiguration(classes = MilongaTestConfig.class)
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
-public class MilongaIntegrationTest {
-
+public class MilongaIntegrationJavaConfigTest {
+	
 	@Autowired
     protected WebApplicationContext wac;
 	
@@ -97,4 +82,5 @@ public class MilongaIntegrationTest {
 				.andExpect(forwardedUrl("/WEB-INF/views/platform.jsp"))
 				.andExpect(model().attribute("platform", "Atmos Code"));
 	}
+
 }

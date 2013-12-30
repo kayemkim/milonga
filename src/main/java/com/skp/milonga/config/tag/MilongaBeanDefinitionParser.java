@@ -1,4 +1,4 @@
-package com.skp.milonga.tag;
+package com.skp.milonga.config.tag;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
