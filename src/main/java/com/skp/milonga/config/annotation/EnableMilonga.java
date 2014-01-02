@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 @Import(DelegatingMilongaConfiguration.class)
 public @interface EnableMilonga {
 	
-	String userSourceLocation() default "WEB-INF/js";
+	String[] locations() default {"WEB-INF/js"};
 	
 	boolean autoRefreshable() default false;
 

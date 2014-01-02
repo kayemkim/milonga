@@ -10,11 +10,7 @@
 	<xsd:element name="milonga">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="location">
-					<xsd:complexType>
-						<xsd:attribute name="value" type="xsd:string"/>
-					</xsd:complexType>
-				</xsd:element>
+				<xsd:element name="location" minOccurs="1" maxOccurs="unbounded"/>
 				<xsd:element name="autoRefreshable">
 					<xsd:complexType>
 						<xsd:attribute name="value" type="xsd:boolean"/>

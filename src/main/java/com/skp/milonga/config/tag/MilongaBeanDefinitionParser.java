@@ -1,5 +1,11 @@
 package com.skp.milonga.config.tag;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValue;
+import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
@@ -14,7 +20,7 @@ import com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping;
 
 public class MilongaBeanDefinitionParser implements BeanDefinitionParser {
 	
-	public static final String PROPERTY_USER_SOURCE_LOCATION = "userSourceLocation";
+	public static final String PROPERTY_USER_SOURCE_LOCATION = "userSourceLocations";
 	public static final String PROPERTY_AUTO_REFRESHABLE = "autoRefreshable";
 	
 	public static final String DEFAULT_USER_SOURCE_LOCATION = "WEB-INF/js";
@@ -26,13 +32,6 @@ public class MilongaBeanDefinitionParser implements BeanDefinitionParser {
 				AtmosRequestMappingHandlerMapping.class);
 		handlerMappingDef.setSource(parserContext.extractSource(element));
 		
-		String userSourceLocation = "";
-		Element exclusionElem = DomUtils.getChildElementByTagName(element,
-				"location");
-		if (exclusionElem != null) {
-			userSourceLocation = exclusionElem.getAttribute("value");
-		}
-		
 		boolean autoRefreshable = false;
 		Element autoRefreshableElem = DomUtils.getChildElementByTagName(
 				element, "autoRefreshable");
@@ -40,12 +39,16 @@ public class MilongaBeanDefinitionParser implements BeanDefinitionParser {
 			autoRefreshable = Boolean.parseBoolean(autoRefreshableElem.getAttribute("value"));
 		}
 		
+		List<Element> dirElemList = DomUtils.getChildElementsByTagName(element, "location");
+		String[] dirStrArr = new String[dirElemList.size()];
+		for (int i = 0 ; i < dirStrArr.length ; i++) {
+			dirStrArr[i] = dirElemList.get(i).getTextContent();
+		}
+		
 		handlerMappingDef.getPropertyValues().addPropertyValue(
-				PROPERTY_USER_SOURCE_LOCATION,
-				userSourceLocation);
+				PROPERTY_USER_SOURCE_LOCATION, dirStrArr);
 		handlerMappingDef.getPropertyValues().addPropertyValue(
-				PROPERTY_AUTO_REFRESHABLE,
-				autoRefreshable);
+				PROPERTY_AUTO_REFRESHABLE, autoRefreshable);
 		String handlerMappingName = parserContext.getReaderContext()
 				.registerWithGeneratedName(handlerMappingDef);
 		BeanDefinitionHolder handlerMappingBeanDefinitionHolder = new BeanDefinitionHolder(

@@ -12,7 +12,7 @@ import com.skp.milonga.config.annotation.EnableMilonga;
 @Configuration
 @EnableWebMvc
 //@ComponentScan(basePackages = {"com.skp.milonga"})
-@EnableMilonga(userSourceLocation = "WEB-INF/js-test", autoRefreshable = true)
+@EnableMilonga(locations = {"WEB-INF/js-test", "WEB-INF/js-test/test.js"}, autoRefreshable = true)
 public class MilongaTestConfig extends WebMvcConfigurerAdapter {
 	
 	@Override

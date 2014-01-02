@@ -50,7 +50,7 @@ public class AtmosRequestMappingHandlerMapping extends
 	/*
 	 * Location of user-scripting javascript files. This should be directory.
 	 */
-	private String userSourceLocation;
+	private String[] userSourceLocations;
 	
 	/*
 	 * state of source code auto-refreshable
@@ -182,20 +182,30 @@ public class AtmosRequestMappingHandlerMapping extends
 			 * location, then url-handler informations gotta be stored in
 			 * memory.
 			 */
-			File dir = new File(getServletContextPath() + userSourceLocation);
-			if (dir.isDirectory()) {
-				String[] fileArray = dir.list();
-				for (String fileName : fileArray) {
-					File jsFile = new File(dir.getAbsolutePath() + "/"
-							+ fileName);
-					if (jsFile.isFile()) {
-						FileReader reader = new FileReader(jsFile);
+			for (String userSourceLocation : userSourceLocations) {
+				File dir = new File(getServletContextPath() + userSourceLocation);
+				if (dir.isDirectory()) {
+					String[] fileArray = dir.list();
+					for (String fileName : fileArray) {
+						File jsFile = new File(dir.getAbsolutePath() + "/"
+								+ fileName);
+						if (jsFile.isFile()) {
+							FileReader reader = new FileReader(jsFile);
 
-						global.defineProperty("mappingInfo",
-								handlerMappingInfoStorage, 0);
+							global.defineProperty("mappingInfo",
+									handlerMappingInfoStorage, 0);
 
-						cx.evaluateReader(global, reader, fileName, 1, null);
+							cx.evaluateReader(global, reader, fileName, 1, null);
+						}
 					}
+				}
+				else {
+					FileReader reader = new FileReader(dir);
+
+					global.defineProperty("mappingInfo",
+							handlerMappingInfoStorage, 0);
+
+					cx.evaluateReader(global, reader, dir.getName(), 1, null);
 				}
 			}
 			atmosLibraryStream.close();
@@ -245,13 +255,16 @@ public class AtmosRequestMappingHandlerMapping extends
 	private void launchJsFileMonitor() {
 		try {
 			FileSystemManager fsManager = VFS.getManager();
-			FileObject listenDir = fsManager.resolveFile(getServletContextPath() + userSourceLocation);
 			JsUserFileListener fileListener = new JsUserFileListener();
 			fileListener.setApplicationContext(getApplicationContext());
 			DefaultFileMonitor fileMonitor = new DefaultFileMonitor(fileListener);
 			
-			fileMonitor.setRecursive(true);
-			fileMonitor.addFile(listenDir);
+			for (String userSourceLocation : userSourceLocations) {
+				FileObject listenDir = fsManager.resolveFile(getServletContextPath() + userSourceLocation);
+				fileMonitor.setRecursive(true);
+				fileMonitor.addFile(listenDir);
+			}
+			
 			fileMonitor.start();
 			
 		} catch (FileSystemException e) {
@@ -276,12 +289,12 @@ public class AtmosRequestMappingHandlerMapping extends
 	/**
 	 * Setter of userSourceLocation
 	 */
-	public void setUserSourceLocation(String userSourceLocation) {
-		this.userSourceLocation = userSourceLocation;
+	public void setUserSourceLocations(String[] userSourceLocations) {
+		this.userSourceLocations = userSourceLocations;
 	}
 	
-	public String getUserSourceLocation() {
-		return userSourceLocation;
+	public String[] getUserSourceLocations() {
+		return userSourceLocations;
 	}
 	
 	public void setAutoRefreshable(boolean autoRefreshable) {

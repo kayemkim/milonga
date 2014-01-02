@@ -28,7 +28,8 @@
 		userSourceLocation="WEB-INF/js-test" 
 		autoRefreshable="true" /> -->
 	<milonga:milonga>
-		<milonga:location value="WEB-INF/js-test"/>
+		<milonga:location>WEB-INF/js-test</milonga:location>
+		<milonga:location>WEB-INF/js-test2</milonga:location>
 		<milonga:autoRefreshable value="true"/>
 	</milonga:milonga>
 	
