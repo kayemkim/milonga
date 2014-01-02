@@ -28,7 +28,6 @@ import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import com.skp.milonga.config.MilongaConfig;
 import com.skp.milonga.interpret.JsUserFileListener;
 import com.skp.milonga.rhino.debug.RhinoDebuggerFactory;
 
@@ -40,8 +39,7 @@ public class AtmosRequestMappingHandlerMapping extends
 	/*
 	 * storage of url-handler mapping infos
 	 */
-	private HandlerMappingInfoStorage handlerMappingInfoStorage = new MilongaConfig()
-			.atmosRequestMappingInfoStorage();
+	private HandlerMappingInfoStorage handlerMappingInfoStorage = new AtmosRequestMappingInfoStorage();
 
 	/*
 	 * Atmos library file stream.
@@ -52,9 +50,12 @@ public class AtmosRequestMappingHandlerMapping extends
 	/*
 	 * Location of user-scripting javascript files. This should be directory.
 	 */
-	private String userSourceLocation;
+	private String[] userSourceLocations;
 	
-	private String configFileLocation;
+	/*
+	 * state of source code auto-refreshable
+	 */
+	private boolean autoRefreshable;
 	
 	private Debugger debugger;
 
@@ -64,13 +65,13 @@ public class AtmosRequestMappingHandlerMapping extends
 			logger.debug("Looking for request mappings in application context: "
 					+ getApplicationContext());
 		}
-
+		
 		detectHandlerMethods();
-
+		
 		handlerMethodsInitialized(getHandlerMethods());
 		
-		launchJsFileMonitor();
-	}
+		processAutoRefresh();
+	}	
 	
 	public void reInitHandlerMethods() {
 		detectHandlerMethods();
@@ -181,20 +182,30 @@ public class AtmosRequestMappingHandlerMapping extends
 			 * location, then url-handler informations gotta be stored in
 			 * memory.
 			 */
-			File dir = new File(getServletContextPath() + userSourceLocation);
-			if (dir.isDirectory()) {
-				String[] fileArray = dir.list();
-				for (String fileName : fileArray) {
-					File jsFile = new File(dir.getAbsolutePath() + "/"
-							+ fileName);
-					if (jsFile.isFile()) {
-						FileReader reader = new FileReader(jsFile);
+			for (String userSourceLocation : userSourceLocations) {
+				File dir = new File(getServletContextPath() + userSourceLocation);
+				if (dir.isDirectory()) {
+					String[] fileArray = dir.list();
+					for (String fileName : fileArray) {
+						File jsFile = new File(dir.getAbsolutePath() + "/"
+								+ fileName);
+						if (jsFile.isFile()) {
+							FileReader reader = new FileReader(jsFile);
 
-						global.defineProperty("mappingInfo",
-								handlerMappingInfoStorage, 0);
+							global.defineProperty("mappingInfo",
+									handlerMappingInfoStorage, 0);
 
-						cx.evaluateReader(global, reader, fileName, 1, null);
+							cx.evaluateReader(global, reader, fileName, 1, null);
+						}
 					}
+				}
+				else {
+					FileReader reader = new FileReader(dir);
+
+					global.defineProperty("mappingInfo",
+							handlerMappingInfoStorage, 0);
+
+					cx.evaluateReader(global, reader, dir.getName(), 1, null);
 				}
 			}
 			atmosLibraryStream.close();
@@ -232,16 +243,28 @@ public class AtmosRequestMappingHandlerMapping extends
 		return handler;
 	}
 	
+	private void processAutoRefresh() {
+		if (autoRefreshable) {
+			launchJsFileMonitor();
+			logger.info("[Milonga] Javascript code auto-refreshable enabled.");
+		} else {
+			logger.info("[Milonga] Javascript code auto-refreshable disabled.");
+		}
+	}
+	
 	private void launchJsFileMonitor() {
 		try {
 			FileSystemManager fsManager = VFS.getManager();
-			FileObject listenDir = fsManager.resolveFile(getServletContextPath() + userSourceLocation);
 			JsUserFileListener fileListener = new JsUserFileListener();
 			fileListener.setApplicationContext(getApplicationContext());
 			DefaultFileMonitor fileMonitor = new DefaultFileMonitor(fileListener);
 			
-			fileMonitor.setRecursive(true);
-			fileMonitor.addFile(listenDir);
+			for (String userSourceLocation : userSourceLocations) {
+				FileObject listenDir = fsManager.resolveFile(getServletContextPath() + userSourceLocation);
+				fileMonitor.setRecursive(true);
+				fileMonitor.addFile(listenDir);
+			}
+			
 			fileMonitor.start();
 			
 		} catch (FileSystemException e) {
@@ -266,17 +289,16 @@ public class AtmosRequestMappingHandlerMapping extends
 	/**
 	 * Setter of userSourceLocation
 	 */
-	public void setUserSourceLocation(String userSourceLocation) {
-		this.userSourceLocation = userSourceLocation;
+	public void setUserSourceLocations(String[] userSourceLocations) {
+		this.userSourceLocations = userSourceLocations;
 	}
 	
-	public String getUserSourceLocation() {
-		return userSourceLocation;
+	public String[] getUserSourceLocations() {
+		return userSourceLocations;
 	}
 	
-	
-	public void setConfigFileLocation(String configFileLocation) {
-		this.configFileLocation = configFileLocation;
+	public void setAutoRefreshable(boolean autoRefreshable) {
+		this.autoRefreshable = autoRefreshable;
 	}
 
 }

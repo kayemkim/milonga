@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns="http://www.skplanet.com/schema/milonga"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	targetNamespace="http://www.skplanet.com/schema/milonga"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<xsd:import namespace="http://www.springframework.org/schema/beans"/>
+	
+	<xsd:element name="milonga">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="location" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element name="autoRefreshable">
+					<xsd:complexType>
+						<xsd:attribute name="value" type="xsd:boolean"/>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<!-- <xsd:complexContent>
+				<xsd:extension base="beans:identifiedType">
+					<xsd:sequence>
+						<xsd:element ref="location" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+					<xsd:attribute name="userSourceLocation" type="xsd:string" />
+					<xsd:attribute name="autoRefreshable" type="xsd:boolean" />
+				</xsd:extension>
+			</xsd:complexContent> -->
+		</xsd:complexType>
+	</xsd:element>
+	
+	<!-- <xsd:element name="location">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="beans:identifiedType">
+					<xsd:attribute name="value" type="xsd:string"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element> -->
+
+</xsd:schema>

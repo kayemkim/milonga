@@ -12,13 +12,13 @@ Atmos.handler('/pathvariable/{varName}', function() {
  * Class Object Binding example
  */
 Atmos.handler('/binding', function(req) {
-	var data = req.bindAs('com.skp.milonga.rhino.Player');
+	var data = req.bindAs('com.skp.milonga.test.model.Player');
 	return data;
 }).toView();
 
 
 Atmos.handler('/json/{id}', function() {
-	var player = new com.skp.milonga.rhino.Player();
+	var player = new com.skp.milonga.test.model.Player();
 	player.setPlayerName(id);
 	return player;
 });
@@ -80,7 +80,7 @@ Atmos.url('/jsStyleBinding/{foo}/{foo2}').define(function() {
 });
 
 Atmos.url('/jsStyleJavaObjectBinding').define(function(req) {
-	return req.bindAs('com.skp.milonga.rhino.Player');
+	return req.bindAs('com.skp.milonga.test.model.Player');
 });
 
 Atmos.handler('/redirectTest', function(req, res) {
