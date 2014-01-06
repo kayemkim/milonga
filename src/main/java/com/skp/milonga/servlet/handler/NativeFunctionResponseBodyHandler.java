@@ -5,13 +5,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeJavaObject;
+import org.mozilla.javascript.tools.shell.Global;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 public class NativeFunctionResponseBodyHandler extends
 		AbstractNativeFunctionHandler {
 
-	public NativeFunctionResponseBodyHandler(NativeFunction atmosFunction) {
-		super(atmosFunction);
+	public NativeFunctionResponseBodyHandler(NativeFunction atmosFunction,
+			ApplicationContext applicationContext, Global global) {
+		super(atmosFunction, applicationContext, global);
 	}
 
 	@ResponseBody

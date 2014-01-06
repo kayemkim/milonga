@@ -12,16 +12,19 @@ import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Undefined;
+import org.mozilla.javascript.tools.shell.Global;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
 public class NativeFunctionModelAndViewHandler extends
 		AbstractNativeFunctionHandler {
 
 	private String viewName = null;
-
-	public NativeFunctionModelAndViewHandler(NativeFunction atmosFunction) {
-		super(atmosFunction);
-	}
+	
+	public NativeFunctionModelAndViewHandler(NativeFunction atmosFunction,
+			ApplicationContext applicationContext, Global global) {
+		super(atmosFunction, applicationContext, global);
+	}	
 
 	@SuppressWarnings("unchecked")
 	@Override

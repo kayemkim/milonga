@@ -1,7 +1,8 @@
 /*
  * @PathVariable example
  */
-Atmos.handler('/pathvariable/{varName}', function() {
+Atmos.handler(context)('/pathvariable/{varName}', function() {
+	context.getBean(com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping);
 	var result = new Object();
 	result['pathVariable'] = varName;
 	return result;
@@ -86,3 +87,8 @@ Atmos.url('/jsStyleJavaObjectBinding').define(function(req) {
 Atmos.handler('/redirectTest', function(req, res) {
 	
 }).redirect('http://www.google.com');
+
+Atmos.handler(context)('/applicationContextTest', function() {
+	var bean = context.getBean(org.springframework.web.servlet.view.InternalResourceViewResolver);
+	return bean.getClass().getName();
+});

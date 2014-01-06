@@ -1,5 +1,11 @@
 function Atmos() {
-	
+	addMethod(this, "handler", function(context){
+		function handler(url, handler) {
+			mappingInfo.putHandler(url, handler);
+			return new Handler(url, handler);
+		}
+		return handler;
+	});
 };
 
 Atmos.prototype = {
@@ -29,6 +35,18 @@ Atmos.prototype = {
 		return new Handler(url, handler);
 	}
 };
+
+//addMethod - By John Resig (MIT Licensed)
+function addMethod(object, name, fn){
+	var old = object[name];
+	object[name] = function(){
+		if (fn.length == arguments.length) 
+			return fn.apply(this, arguments);
+		else 
+			if (typeof old == 'function') 
+				return old.apply(this, arguments);
+	};
+}
 
 var Atmos = new Atmos();
 

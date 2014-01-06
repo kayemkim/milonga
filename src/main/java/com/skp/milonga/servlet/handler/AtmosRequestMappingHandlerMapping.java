@@ -23,6 +23,7 @@ import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.debug.Debugger;
 import org.mozilla.javascript.tools.debugger.Dim;
 import org.mozilla.javascript.tools.shell.Global;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -58,6 +59,8 @@ public class AtmosRequestMappingHandlerMapping extends
 	private boolean autoRefreshable;
 	
 	private Debugger debugger;
+	
+	private Global global;
 
 	@Override
 	protected void initHandlerMethods() {
@@ -152,7 +155,7 @@ public class AtmosRequestMappingHandlerMapping extends
 	private void processAtmostRequestMappingInfo() {
 
 		Context cx = Context.enter();
-		Global global = new Global(cx);
+		global = new Global(cx);
 
 		// javascript library loading
 		/*
@@ -174,6 +177,9 @@ public class AtmosRequestMappingHandlerMapping extends
 					.getResourceAsStream(ATMOS_JS_FILE_NAME);
 
 			InputStreamReader isr = new InputStreamReader(atmosLibraryStream);
+			
+			// define Spring application context to context variable
+			global.defineProperty("context", getApplicationContext(), 0);
 
 			cx.evaluateReader(global, isr, ATMOS_JS_FILE_NAME, 1, null);
 
@@ -233,8 +239,8 @@ public class AtmosRequestMappingHandlerMapping extends
 
 		try {
 			Constructor<?> handlerConst = handlerTypeClass
-					.getConstructor(NativeFunction.class);
-			handler = handlerConst.newInstance(atmosFunction);
+					.getConstructor(NativeFunction.class, ApplicationContext.class, Global.class);
+			handler = handlerConst.newInstance(atmosFunction, getApplicationContext(), global);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
