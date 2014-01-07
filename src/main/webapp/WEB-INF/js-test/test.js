@@ -1,7 +1,7 @@
 /*
  * @PathVariable example
  */
-Atmos.handler(context)('/pathvariable/{varName}', function() {
+Atmos.handler('/pathvariable/{varName}', function() {
 	context.getBean(com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping);
 	var result = new Object();
 	result['pathVariable'] = varName;
@@ -92,3 +92,8 @@ Atmos.handler(context)('/applicationContextTest', function() {
 	var bean = context.getBean(org.springframework.web.servlet.view.InternalResourceViewResolver);
 	return bean.getClass().getName();
 });
+
+Atmos.handler('/httpMethodTest', function(req) {
+	var data = req.bindAs('com.skp.milonga.test.model.Player');
+	return data.homerun();
+}, 'POST', 'GET');

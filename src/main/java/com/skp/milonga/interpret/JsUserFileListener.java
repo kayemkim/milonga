@@ -57,6 +57,8 @@ public class JsUserFileListener extends WebApplicationObjectSupport implements F
 
 			handlerMapping.getHandlerMappingInfoStorage()
 					.getHandlerMappingInfos().clear();
+			handlerMapping.getHandlerMappingInfoStorage()
+					.getHandlerWithViewMappingInfos().clear();
 			
 			handlerMapping.reInitHandlerMethods();
 		} catch (Exception e) {

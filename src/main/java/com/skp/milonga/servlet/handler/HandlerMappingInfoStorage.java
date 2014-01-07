@@ -10,7 +10,7 @@ public interface HandlerMappingInfoStorage {
 	 * @param url
 	 * @param handler
 	 */
-	public abstract void putHandler(String url, Object handler);
+	public abstract void putHandler(String url, HandlerDefinition handler);
 
 	/**
 	 * Store handler mapping info. This handler returns view page.
@@ -18,7 +18,7 @@ public interface HandlerMappingInfoStorage {
 	 * @param url
 	 * @param handler
 	 */
-	public abstract void putHandlerWithView(String url, Object handler);
+	public abstract void putHandlerWithView(String url, HandlerDefinition handler);
 
 	/**
 	 * store mapping info of url and view page .
@@ -33,14 +33,14 @@ public interface HandlerMappingInfoStorage {
 	 * 
 	 * @return
 	 */
-	public abstract Map<String, Object> getHandlerMappingInfos();
+	public abstract Map<String, HandlerDefinition> getHandlerMappingInfos();
 
 	/**
 	 * return mapping info of url - handler with view page
 	 *   
 	 * @return
 	 */
-	public abstract Map<String, Object> getHandlerWithViewMappingInfos();
+	public abstract Map<String, HandlerDefinition> getHandlerWithViewMappingInfos();
 
 	/**
 	 * return view page name matching with url

@@ -23,15 +23,22 @@ import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.debug.Debugger;
 import org.mozilla.javascript.tools.debugger.Dim;
 import org.mozilla.javascript.tools.shell.Global;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
+import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.skp.milonga.interpret.JsUserFileListener;
 import com.skp.milonga.rhino.debug.RhinoDebuggerFactory;
 
+/**
+ * Milonga Core Bean
+ * 
+ * @author kminkim
+ *
+ */
 public class AtmosRequestMappingHandlerMapping extends
 		RequestMappingHandlerMapping {
 
@@ -104,7 +111,7 @@ public class AtmosRequestMappingHandlerMapping extends
 	}
 
 	/**
-	 * register
+	 * register handlers
 	 * 
 	 * @param mappingInfos
 	 * @param handlerClassType
@@ -112,40 +119,76 @@ public class AtmosRequestMappingHandlerMapping extends
 	 * @throws NoSuchMethodException
 	 */
 	private void registerNativeFunctionHandlers(
-			Map<String, Object> mappingInfos,
+			Map<String, HandlerDefinition> mappingInfos,
 			Class<? extends AbstractNativeFunctionHandler> handlerClassType)
 			throws SecurityException, NoSuchMethodException {
 
-		Iterator<Entry<String, Object>> iterator = mappingInfos.entrySet()
+		Iterator<Entry<String, HandlerDefinition>> iterator = mappingInfos.entrySet()
 				.iterator();
 
 		while (iterator.hasNext()) {
-			String url = iterator.next().getKey();
-			NativeFunction atmosFunction = (NativeFunction) mappingInfos
-					.get(url);
-			Object atmosHandler = getHandler(atmosFunction, handlerClassType);
-			Class<?> handlerType = (atmosHandler instanceof String) ? getApplicationContext()
-					.getType((String) atmosHandler) : atmosHandler.getClass();
-
-			if (atmosHandler instanceof NativeFunctionModelAndViewHandler) {
-				((NativeFunctionModelAndViewHandler) atmosHandler)
-						.setViewName(handlerMappingInfoStorage.getViewName(url));
-			}
-
-			final Class<?> userType = ClassUtils.getUserClass(handlerType);
-
-			Method method = userType.getMethod(
-					AbstractNativeFunctionHandler.HANDLER_METHOD_NAME,
-					HttpServletRequest.class, HttpServletResponse.class);
-			RequestMappingInfo mapping = new RequestMappingInfo(
-					new PatternsRequestCondition(url),
-					/* new RequestMethodsRequestCondition(RequestMethod.GET) */null,
-					null, null, null,
-					/* new ProducesRequestCondition("application/xml") */null,
-					null);
-
-			registerHandlerMethod(atmosHandler, method, mapping);
+			Entry<String, HandlerDefinition> mappingInfo = iterator.next();
+			
+			String url = mappingInfo.getKey();
+			HandlerDefinition handlerDefinition = mappingInfo.getValue();
+			
+			registerNativeFunctionHandler(url, handlerDefinition, handlerClassType);
 		}
+	}
+	
+	/**
+	 * register handler
+	 * @param url
+	 * @param handlerDefinition
+	 * @param handlerClassType
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 */
+	private void registerNativeFunctionHandler(String url,
+			HandlerDefinition handlerDefinition,
+			Class<? extends AbstractNativeFunctionHandler> handlerClassType)
+			throws SecurityException, NoSuchMethodException {
+		NativeFunction atmosFunction = (NativeFunction) handlerDefinition
+				.getHandler();
+		Object atmosHandler = getHandler(atmosFunction, handlerClassType);
+		Class<?> handlerType = (atmosHandler instanceof String) ? getApplicationContext()
+				.getType((String) atmosHandler) : atmosHandler.getClass();
+
+		if (atmosHandler instanceof NativeFunctionModelAndViewHandler) {
+			((NativeFunctionModelAndViewHandler) atmosHandler)
+					.setViewName(handlerMappingInfoStorage.getViewName(url));
+		}
+
+		final Class<?> userType = ClassUtils.getUserClass(handlerType);
+
+		Method method = userType.getMethod(
+				AbstractNativeFunctionHandler.HANDLER_METHOD_NAME,
+				HttpServletRequest.class, HttpServletResponse.class);
+
+		RequestMethodsRequestCondition requestMethodsRequestCondition = getRequestMethodsRequestCondition(handlerDefinition
+				.getHttpMethods());
+
+		RequestMappingInfo mapping = new RequestMappingInfo(
+				new PatternsRequestCondition(url),
+				requestMethodsRequestCondition, null, null, null,
+				/* new ProducesRequestCondition("application/xml") */null, null);
+
+		registerHandlerMethod(atmosHandler, method, mapping);
+	}
+	
+	/**
+	 * convert httpMethods String array to RequestMethod array
+	 * 
+	 * @param httpMethods
+	 * @return
+	 */
+	private RequestMethodsRequestCondition getRequestMethodsRequestCondition(
+			String[] httpMethods) {
+		RequestMethod[] requestMethods = new RequestMethod[httpMethods.length];
+		for (int i = 0; i < requestMethods.length; i++) {
+			requestMethods[i] = RequestMethod.valueOf(httpMethods[i]);
+		}
+		return new RequestMethodsRequestCondition(requestMethods);
 	}
 	
 	/**
@@ -239,8 +282,8 @@ public class AtmosRequestMappingHandlerMapping extends
 
 		try {
 			Constructor<?> handlerConst = handlerTypeClass
-					.getConstructor(NativeFunction.class, ApplicationContext.class, Global.class);
-			handler = handlerConst.newInstance(atmosFunction, getApplicationContext(), global);
+					.getConstructor(NativeFunction.class, Global.class);
+			handler = handlerConst.newInstance(atmosFunction, global);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

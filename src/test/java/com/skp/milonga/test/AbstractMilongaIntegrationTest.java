@@ -1,6 +1,7 @@
 package com.skp.milonga.test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import com.skp.milonga.test.model.Player;
 
 public abstract class AbstractMilongaIntegrationTest {
 	
@@ -80,6 +83,21 @@ public abstract class AbstractMilongaIntegrationTest {
 				get("/applicationContextTest"))
 				.andExpect(status().isOk())
 				.andExpect(content().string("org.springframework.web.servlet.view.InternalResourceViewResolver"));
+	}
+	
+	@Test
+	public void httpMethodTest() throws Exception {
+		Player player = new Player();
+		player.setPlayerName("mets");
+		
+		mockMvc.perform(
+				post("/httpMethodTest").param("playerName", player.getPlayerName()))
+				.andExpect(status().isOk())
+				.andExpect(content().string(player.homerun()));
+		
+		mockMvc.perform(
+				get("/httpMethodTest"))
+				.andExpect(status().isOk());
 	}
 
 }

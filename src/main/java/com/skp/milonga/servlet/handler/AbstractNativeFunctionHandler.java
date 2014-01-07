@@ -14,9 +14,6 @@ import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.tools.shell.Global;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.HandlerMapping;
@@ -32,7 +29,7 @@ import com.skp.milonga.servlet.AtmosResponse;
  * @author kminkim
  * 
  */
-public abstract class AbstractNativeFunctionHandler implements ApplicationContextAware {
+public abstract class AbstractNativeFunctionHandler {
 
 	public static final String HANDLER_METHOD_NAME = "handle";
 
@@ -41,26 +38,13 @@ public abstract class AbstractNativeFunctionHandler implements ApplicationContex
 	private String redirectPath = null;
 	private String forwardPath = null;
 	
-	private ApplicationContext applicationContext;
-	
 	private Global global;
 
-	public AbstractNativeFunctionHandler(NativeFunction atmosFunction, ApplicationContext applicationContext, Global global) {
+	public AbstractNativeFunctionHandler(NativeFunction atmosFunction, Global global) {
 		this.atmosFunction = atmosFunction;
-		this.applicationContext = applicationContext;
 		this.global = global;
 	}
 	
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
-		this.applicationContext = applicationContext;
-	}
-	
-	protected ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
-
 	/**
 	 * Handler method
 	 * 

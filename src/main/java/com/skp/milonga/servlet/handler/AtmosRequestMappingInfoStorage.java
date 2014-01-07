@@ -11,9 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class AtmosRequestMappingInfoStorage implements HandlerMappingInfoStorage {
 
-	private Map<String, Object> handlerMappingStorage = new ConcurrentHashMap<String, Object>();
+	private Map<String, HandlerDefinition> handlerMappingStorage = new ConcurrentHashMap<String, HandlerDefinition>();
 
-	private Map<String, Object> handlerWithViewMappingInfoStorage = new ConcurrentHashMap<String, Object>();
+	private Map<String, HandlerDefinition> handlerWithViewMappingInfoStorage = new ConcurrentHashMap<String, HandlerDefinition>();
 
 	private Map<String, String> viewNameMappingInfoStorage = new ConcurrentHashMap<String, String>();
 
@@ -25,7 +25,7 @@ public class AtmosRequestMappingInfoStorage implements HandlerMappingInfoStorage
 	 * java.lang.Object)
 	 */
 	@Override
-	public void putHandler(String url, Object handler) {
+	public void putHandler(String url, HandlerDefinition handler) {
 		handlerMappingStorage.put(url, handler);
 		removeHandlerWithView(url);
 	}
@@ -38,7 +38,7 @@ public class AtmosRequestMappingInfoStorage implements HandlerMappingInfoStorage
 	 * .String, java.lang.Object)
 	 */
 	@Override
-	public void putHandlerWithView(String url, Object handler) {
+	public void putHandlerWithView(String url, HandlerDefinition handler) {
 		handlerWithViewMappingInfoStorage.put(url, handler);
 		removeHandler(url);
 	}
@@ -61,7 +61,7 @@ public class AtmosRequestMappingInfoStorage implements HandlerMappingInfoStorage
 	 * @see com.skp.milonga.rhino.MappingInfoStorage#getHandlerMappingInfos()
 	 */
 	@Override
-	public Map<String, Object> getHandlerMappingInfos() {
+	public Map<String, HandlerDefinition> getHandlerMappingInfos() {
 		return handlerMappingStorage;
 	}
 
@@ -72,7 +72,7 @@ public class AtmosRequestMappingInfoStorage implements HandlerMappingInfoStorage
 	 * com.skp.milonga.rhino.MappingInfoStorage#getHandlerWithViewMappingInfos()
 	 */
 	@Override
-	public Map<String, Object> getHandlerWithViewMappingInfos() {
+	public Map<String, HandlerDefinition> getHandlerWithViewMappingInfos() {
 		return handlerWithViewMappingInfoStorage;
 	}
 
