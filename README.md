@@ -12,7 +12,7 @@ To take advantage of Javascript features such as dynamic typing, closures and JS
 
 Milonga is based on Rhino, which is an open-source implementation of Javascript written entirely in Java. Milonga controllers are compiled to Java bytecode and executed on JVM where Spring MVC application is executed. Therefore Milonga controllers can be used with existing Spring MVC controllers on the same JVM. For example, you can write Javascript code for some Spring MVC controllers.
 
-![alt text](.wiki/images/simple_architecture.png "Milonga Overview")
+![alt text](../../wiki/images/simple_architecture.png "Milonga Overview")
 
 Milonga is Simple
 -----------------
