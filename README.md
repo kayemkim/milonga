@@ -55,5 +55,5 @@ Features
 Furthermore
 -----------
 
-* [Quickstart](./wiki/Quickstart)
-* [API](./wiki/API)
+* [Quickstart](https://github.com/kayemkim/milonga/wiki/Quickstart)
+* [User Guide](https://github.com/kayemkim/milonga/wiki/UserGuide)
