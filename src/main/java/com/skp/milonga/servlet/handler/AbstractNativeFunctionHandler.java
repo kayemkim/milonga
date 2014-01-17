@@ -82,9 +82,9 @@ public abstract class AbstractNativeFunctionHandler {
 	/**
 	 * Call Javascript Native Function
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
+	 * @param	request
+	 * @param	response
+	 * @return	handler
 	 */
 	protected Object callNativeFunction(HttpServletRequest request,
 			HttpServletResponse response) {

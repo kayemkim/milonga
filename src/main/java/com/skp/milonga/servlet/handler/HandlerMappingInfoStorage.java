@@ -47,22 +47,22 @@ public interface HandlerMappingInfoStorage {
 	/**
 	 * return url - handler mapping info
 	 * 
-	 * @return
+	 * @return	url - handler mapping info
 	 */
 	public abstract Map<String, HandlerDefinition> getHandlerMappingInfos();
 
 	/**
 	 * return mapping info of url - handler with view page
 	 *   
-	 * @return
+	 * @return mapping info of url - handler with view page
 	 */
 	public abstract Map<String, HandlerDefinition> getHandlerWithViewMappingInfos();
 
 	/**
 	 * return view page name matching with url
 	 * 
-	 * @param url
-	 * @return
+	 * @param	url
+	 * @return	view page name
 	 */	
 	public abstract String getViewName(String url);
 
