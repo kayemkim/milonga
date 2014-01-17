@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 K.M. Kim
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.skp.milonga.servlet.handler;
 
 import java.io.File;
@@ -13,19 +29,32 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.VFS;
+import org.apache.commons.vfs2.impl.DefaultFileMonitor;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.debug.Debugger;
 import org.mozilla.javascript.tools.debugger.Dim;
 import org.mozilla.javascript.tools.shell.Global;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
+import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import com.skp.milonga.config.MilongaConfig;
+import com.skp.milonga.interpret.JsUserFileListener;
 import com.skp.milonga.rhino.debug.RhinoDebuggerFactory;
 
+/**
+ * Milonga Core Bean
+ * 
+ * @author kminkim
+ *
+ */
 public class AtmosRequestMappingHandlerMapping extends
 		RequestMappingHandlerMapping {
 
@@ -34,8 +63,7 @@ public class AtmosRequestMappingHandlerMapping extends
 	/*
 	 * storage of url-handler mapping infos
 	 */
-	private HandlerMappingInfoStorage handlerMappingInfos = new MilongaConfig()
-			.atmosRequestMappingInfoStorage();
+	private HandlerMappingInfoStorage handlerMappingInfoStorage = new AtmosRequestMappingInfoStorage();
 
 	/*
 	 * Atmos library file stream.
@@ -46,9 +74,16 @@ public class AtmosRequestMappingHandlerMapping extends
 	/*
 	 * Location of user-scripting javascript files. This should be directory.
 	 */
-	private String userSourceLocation;
+	private String[] userSourceLocations;
 	
-	private String configFileLocation;
+	/*
+	 * state of source code auto-refreshable
+	 */
+	private boolean autoRefreshable;
+	
+	private Debugger debugger;
+	
+	private Global global;
 
 	@Override
 	protected void initHandlerMethods() {
@@ -56,10 +91,18 @@ public class AtmosRequestMappingHandlerMapping extends
 			logger.debug("Looking for request mappings in application context: "
 					+ getApplicationContext());
 		}
-
+		
 		detectHandlerMethods();
-
+		
 		handlerMethodsInitialized(getHandlerMethods());
+		
+		processAutoRefresh();
+	}	
+	
+	public void reInitHandlerMethods() {
+		detectHandlerMethods();
+		handlerMethodsInitialized(getHandlerMethods());
+		logger.info("[Milonga] Refreshing Javascript source is done. All handler methods re-registered.");
 	}
 
 	/**
@@ -72,10 +115,10 @@ public class AtmosRequestMappingHandlerMapping extends
 
 		try {
 			registerNativeFunctionHandlers(
-					handlerMappingInfos.getHandlerMappingInfos(),
+					handlerMappingInfoStorage.getHandlerMappingInfos(),
 					NativeFunctionResponseBodyHandler.class);
 			registerNativeFunctionHandlers(
-					handlerMappingInfos.getHandlerWithViewMappingInfos(),
+					handlerMappingInfoStorage.getHandlerWithViewMappingInfos(),
 					NativeFunctionModelAndViewHandler.class);
 
 		} catch (Exception e) {
@@ -84,7 +127,7 @@ public class AtmosRequestMappingHandlerMapping extends
 	}
 
 	/**
-	 * register
+	 * register handlers
 	 * 
 	 * @param mappingInfos
 	 * @param handlerClassType
@@ -92,42 +135,78 @@ public class AtmosRequestMappingHandlerMapping extends
 	 * @throws NoSuchMethodException
 	 */
 	private void registerNativeFunctionHandlers(
-			Map<String, Object> mappingInfos,
+			Map<String, HandlerDefinition> mappingInfos,
 			Class<? extends AbstractNativeFunctionHandler> handlerClassType)
 			throws SecurityException, NoSuchMethodException {
 
-		Iterator<Entry<String, Object>> iterator = mappingInfos.entrySet()
+		Iterator<Entry<String, HandlerDefinition>> iterator = mappingInfos.entrySet()
 				.iterator();
 
 		while (iterator.hasNext()) {
-			String url = iterator.next().getKey();
-			NativeFunction atmosFunction = (NativeFunction) mappingInfos
-					.get(url);
-			Object atmosHandler = getHandler(atmosFunction, handlerClassType);
-			Class<?> handlerType = (atmosHandler instanceof String) ? getApplicationContext()
-					.getType((String) atmosHandler) : atmosHandler.getClass();
-
-			if (atmosHandler instanceof NativeFunctionModelAndViewHandler) {
-				((NativeFunctionModelAndViewHandler) atmosHandler)
-						.setViewName(handlerMappingInfos.getViewName(url));
-			}
-
-			final Class<?> userType = ClassUtils.getUserClass(handlerType);
-
-			Method method = userType.getMethod(
-					AbstractNativeFunctionHandler.HANDLER_METHOD_NAME,
-					HttpServletRequest.class, HttpServletResponse.class);
-			RequestMappingInfo mapping = new RequestMappingInfo(
-					new PatternsRequestCondition(url),
-					/* new RequestMethodsRequestCondition(RequestMethod.GET) */null,
-					null, null, null,
-					/* new ProducesRequestCondition("application/xml") */null,
-					null);
-
-			registerHandlerMethod(atmosHandler, method, mapping);
+			Entry<String, HandlerDefinition> mappingInfo = iterator.next();
+			
+			String url = mappingInfo.getKey();
+			HandlerDefinition handlerDefinition = mappingInfo.getValue();
+			
+			registerNativeFunctionHandler(url, handlerDefinition, handlerClassType);
 		}
 	}
+	
+	/**
+	 * register handler
+	 * @param url
+	 * @param handlerDefinition
+	 * @param handlerClassType
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 */
+	private void registerNativeFunctionHandler(String url,
+			HandlerDefinition handlerDefinition,
+			Class<? extends AbstractNativeFunctionHandler> handlerClassType)
+			throws SecurityException, NoSuchMethodException {
+		NativeFunction atmosFunction = (NativeFunction) handlerDefinition
+				.getHandler();
+		Object atmosHandler = getHandler(atmosFunction, handlerClassType);
+		Class<?> handlerType = (atmosHandler instanceof String) ? getApplicationContext()
+				.getType((String) atmosHandler) : atmosHandler.getClass();
 
+		if (atmosHandler instanceof NativeFunctionModelAndViewHandler) {
+			((NativeFunctionModelAndViewHandler) atmosHandler)
+					.setViewName(handlerMappingInfoStorage.getViewName(url));
+		}
+
+		final Class<?> userType = ClassUtils.getUserClass(handlerType);
+
+		Method method = userType.getMethod(
+				AbstractNativeFunctionHandler.HANDLER_METHOD_NAME,
+				HttpServletRequest.class, HttpServletResponse.class);
+
+		RequestMethodsRequestCondition requestMethodsRequestCondition = getRequestMethodsRequestCondition(handlerDefinition
+				.getHttpMethods());
+
+		RequestMappingInfo mapping = new RequestMappingInfo(
+				new PatternsRequestCondition(url),
+				requestMethodsRequestCondition, null, null, null,
+				/* new ProducesRequestCondition("application/xml") */null, null);
+
+		registerHandlerMethod(atmosHandler, method, mapping);
+	}
+	
+	/**
+	 * convert httpMethods String array to RequestMethod array
+	 * 
+	 * @param httpMethods
+	 * @return
+	 */
+	private RequestMethodsRequestCondition getRequestMethodsRequestCondition(
+			String[] httpMethods) {
+		RequestMethod[] requestMethods = new RequestMethod[httpMethods.length];
+		for (int i = 0; i < requestMethods.length; i++) {
+			requestMethods[i] = RequestMethod.valueOf(httpMethods[i]);
+		}
+		return new RequestMethodsRequestCondition(requestMethods);
+	}
+	
 	/**
 	 * Process all user scripting javascript files in configured location, then
 	 * url-handler mapping infos gotta be stored in memory.
@@ -135,7 +214,7 @@ public class AtmosRequestMappingHandlerMapping extends
 	private void processAtmostRequestMappingInfo() {
 
 		Context cx = Context.enter();
-		Global global = new Global(cx);
+		global = new Global(cx);
 
 		// javascript library loading
 		/*
@@ -147,10 +226,19 @@ public class AtmosRequestMappingHandlerMapping extends
 		try {
 			// optimization level -1 means interpret mode
 			cx.setOptimizationLevel(-1);
-			Debugger debugger = RhinoDebuggerFactory.create();
+			if (debugger == null) {
+				debugger = RhinoDebuggerFactory.create();
+			}
+			//Debugger debugger = RhinoDebuggerFactory.create();
 			cx.setDebugger(debugger, new Dim.ContextData());
+			
+			atmosLibraryStream = getClass().getClassLoader()
+					.getResourceAsStream(ATMOS_JS_FILE_NAME);
 
 			InputStreamReader isr = new InputStreamReader(atmosLibraryStream);
+			
+			// define Spring application context to context variable
+			global.defineProperty("context", getApplicationContext(), 0);
 
 			cx.evaluateReader(global, isr, ATMOS_JS_FILE_NAME, 1, null);
 
@@ -159,22 +247,33 @@ public class AtmosRequestMappingHandlerMapping extends
 			 * location, then url-handler informations gotta be stored in
 			 * memory.
 			 */
-			File dir = new File(getServletContextPath() + userSourceLocation);
-			if (dir.isDirectory()) {
-				String[] fileArray = dir.list();
-				for (String fileName : fileArray) {
-					File jsFile = new File(dir.getAbsolutePath() + "/"
-							+ fileName);
-					if (jsFile.isFile()) {
-						FileReader reader = new FileReader(jsFile);
+			for (String userSourceLocation : userSourceLocations) {
+				File dir = new File(getServletContextPath() + userSourceLocation);
+				if (dir.isDirectory()) {
+					String[] fileArray = dir.list();
+					for (String fileName : fileArray) {
+						File jsFile = new File(dir.getAbsolutePath() + "/"
+								+ fileName);
+						if (jsFile.isFile()) {
+							FileReader reader = new FileReader(jsFile);
 
-						global.defineProperty("mappingInfo",
-								handlerMappingInfos, 0);
+							global.defineProperty("mappingInfo",
+									handlerMappingInfoStorage, 0);
 
-						cx.evaluateReader(global, reader, fileName, 1, null);
+							cx.evaluateReader(global, reader, fileName, 1, null);
+						}
 					}
 				}
+				else {
+					FileReader reader = new FileReader(dir);
+
+					global.defineProperty("mappingInfo",
+							handlerMappingInfoStorage, 0);
+
+					cx.evaluateReader(global, reader, dir.getName(), 1, null);
+				}
 			}
+			atmosLibraryStream.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -199,8 +298,8 @@ public class AtmosRequestMappingHandlerMapping extends
 
 		try {
 			Constructor<?> handlerConst = handlerTypeClass
-					.getConstructor(NativeFunction.class);
-			handler = handlerConst.newInstance(atmosFunction);
+					.getConstructor(NativeFunction.class, Global.class);
+			handler = handlerConst.newInstance(atmosFunction, global);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -208,25 +307,63 @@ public class AtmosRequestMappingHandlerMapping extends
 		}
 		return handler;
 	}
+	
+	private void processAutoRefresh() {
+		if (autoRefreshable) {
+			launchJsFileMonitor();
+			logger.info("[Milonga] Javascript code auto-refreshable enabled.");
+		} else {
+			logger.info("[Milonga] Javascript code auto-refreshable disabled.");
+		}
+	}
+	
+	private void launchJsFileMonitor() {
+		try {
+			FileSystemManager fsManager = VFS.getManager();
+			JsUserFileListener fileListener = new JsUserFileListener();
+			fileListener.setApplicationContext(getApplicationContext());
+			DefaultFileMonitor fileMonitor = new DefaultFileMonitor(fileListener);
+			
+			for (String userSourceLocation : userSourceLocations) {
+				FileObject listenDir = fsManager.resolveFile(getServletContextPath() + userSourceLocation);
+				fileMonitor.setRecursive(true);
+				fileMonitor.addFile(listenDir);
+			}
+			
+			fileMonitor.start();
+			
+		} catch (FileSystemException e) {
+			logger.error(
+					"[Milonga] Launching javascript source watcher is failed. Interpreter mode is not available.",
+					e);
+		}
+	}
 
 	/**
 	 * Setter of requestMappingInfo
 	 */
-	public void setHandlerMappingInfos(
-			HandlerMappingInfoStorage handlerMappingInfos) {
-		this.handlerMappingInfos = handlerMappingInfos;
+	public void setHandlerMappingInfoStorage(
+			HandlerMappingInfoStorage handlerMappingInfoStorage) {
+		this.handlerMappingInfoStorage = handlerMappingInfoStorage;
+	}
+	
+	public HandlerMappingInfoStorage getHandlerMappingInfoStorage() {
+		return handlerMappingInfoStorage;
 	}
 
 	/**
 	 * Setter of userSourceLocation
 	 */
-	public void setUserSourceLocation(String userSourceLocation) {
-		this.userSourceLocation = userSourceLocation;
+	public void setUserSourceLocations(String[] userSourceLocations) {
+		this.userSourceLocations = userSourceLocations;
 	}
 	
+	public String[] getUserSourceLocations() {
+		return userSourceLocations;
+	}
 	
-	public void setConfigFileLocation(String configFileLocation) {
-		this.configFileLocation = configFileLocation;
+	public void setAutoRefreshable(boolean autoRefreshable) {
+		this.autoRefreshable = autoRefreshable;
 	}
 
 }

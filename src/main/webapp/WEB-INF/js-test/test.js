@@ -2,6 +2,7 @@
  * @PathVariable example
  */
 Atmos.handler('/pathvariable/{varName}', function() {
+	context.getBean(com.skp.milonga.servlet.handler.AtmosRequestMappingHandlerMapping);
 	var result = new Object();
 	result['pathVariable'] = varName;
 	return result;
@@ -12,13 +13,13 @@ Atmos.handler('/pathvariable/{varName}', function() {
  * Class Object Binding example
  */
 Atmos.handler('/binding', function(req) {
-	var data = req.bindAs('com.skp.milonga.rhino.Player');
+	var data = req.bindAs('com.skp.milonga.test.model.Player');
 	return data;
 }).toView();
 
 
 Atmos.handler('/json/{id}', function() {
-	var player = new com.skp.milonga.rhino.Player();
+	var player = new com.skp.milonga.test.model.Player();
 	player.setPlayerName(id);
 	return player;
 });
@@ -80,9 +81,19 @@ Atmos.url('/jsStyleBinding/{foo}/{foo2}').define(function() {
 });
 
 Atmos.url('/jsStyleJavaObjectBinding').define(function(req) {
-	return req.bindAs('com.skp.milonga.rhino.Player');
+	return req.bindAs('com.skp.milonga.test.model.Player');
 });
 
 Atmos.handler('/redirectTest', function(req, res) {
 	
 }).redirect('http://www.google.com');
+
+Atmos.handler(context)('/applicationContextTest', function() {
+	var bean = context.getBean(org.springframework.web.servlet.view.InternalResourceViewResolver);
+	return bean.getClass().getName();
+});
+
+Atmos.handler('/httpMethodTest', function(req) {
+	var data = req.bindAs('com.skp.milonga.test.model.Player');
+	return data.homerun();
+}, 'POST', 'GET');

@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package com.skp.milonga.servlet;
+package com.skp.milonga.config.tag;
 
-import org.mozilla.javascript.NativeObject;
+import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
-/**
- * cookie replacement
- * 
- * @author kminkim
- *
- */
-public class AtmosCookie extends NativeObject {
+public class MilongaNamespaceHandler extends NamespaceHandlerSupport {
 
-	private static final long serialVersionUID = -7166410058320844099L;
+	@Override
+	public void init() {
+		registerBeanDefinitionParser("milonga", new MilongaBeanDefinitionParser());
+	}
 
 }

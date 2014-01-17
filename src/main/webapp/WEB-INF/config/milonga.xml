@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<milonga>
-	<js-files>
-		<file>WEB-INF/js-test/test.js</file>
-		<file>WEB-INF/js-test/sample.js</file>
-	</js-files>
-</milonga>

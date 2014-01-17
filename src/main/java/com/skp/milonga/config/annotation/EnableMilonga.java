@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package com.skp.milonga.servlet;
+package com.skp.milonga.config.annotation;
 
-import org.mozilla.javascript.NativeObject;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * cookie replacement
- * 
- * @author kminkim
- *
- */
-public class AtmosCookie extends NativeObject {
+import org.springframework.context.annotation.Import;
 
-	private static final long serialVersionUID = -7166410058320844099L;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Documented
+@Import(DelegatingMilongaConfiguration.class)
+public @interface EnableMilonga {
+	
+	String[] locations() default {"WEB-INF/js"};
+	
+	boolean autoRefreshable() default false;
 
 }

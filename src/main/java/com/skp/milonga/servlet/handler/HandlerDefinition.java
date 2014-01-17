@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package com.skp.milonga.servlet;
+package com.skp.milonga.servlet.handler;
 
-import org.mozilla.javascript.NativeObject;
+public class HandlerDefinition {
+	
+	private Object handler;
+	
+	private String[] httpMethods;
+	
+	public HandlerDefinition(Object handler, String[] httpMethods) {
+		this.handler = handler;
+		this.httpMethods = httpMethods;
+	}
 
-/**
- * cookie replacement
- * 
- * @author kminkim
- *
- */
-public class AtmosCookie extends NativeObject {
+	public Object getHandler() {
+		return handler;
+	}	
 
-	private static final long serialVersionUID = -7166410058320844099L;
-
+	public String[] getHttpMethods() {
+		return httpMethods;
+	}	
 }

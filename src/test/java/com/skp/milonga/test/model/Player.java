@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2014 K.M. Kim
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.skp.milonga.rhino.mvctest;
 
-public class WebContextLoader extends GenericWebContextLoader {
+package com.skp.milonga.test.model;
 
-	public WebContextLoader() {
-		//super("src/test/resources/META-INF/web-resources", false);
-		super("src/main/webapp", false);
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.annotate.JsonProperty;
+
+@XmlRootElement
+public class Player {
+	
+	@JsonProperty
+	private String playerName;
+
+	public String getPlayerName() {
+		return playerName;
 	}
 
+	public void setPlayerName(String playerName) {
+		this.playerName = playerName;
+	}
+	
+	public String homerun() {
+		return playerName + "'s homer!!!";
+	}
+	
 }
