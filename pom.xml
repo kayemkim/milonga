@@ -15,8 +15,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<url>https://github.com/kayemkim/milonga/tags/milonga-0.11.0</url>
-		<connection>scm:git:git://github.com/kayemkim/milonga.git/tags/milonga-0.11.0</connection>
+		<connection>scm:git:git@github.com:kayemkim/milonga.git</connection>
+		<developerConnection>scm:git:git@github.com:kayemkim/milonga.git</developerConnection>
+		<url>git@github.com:kayemkim/milonga.git</url>
 	</scm>
 	<developers>
 		<developer>
