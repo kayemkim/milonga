@@ -52,8 +52,17 @@ Features
 * RESTful request dispatching
 * Using Rhino internally
 
+License
+-------
+
+Milonga is released under version 2.0 of the [Apache License](http://www.apache.org/licenses/LICENSE-2.0).
+
 Furthermore
 -----------
 
 * [Quickstart](https://github.com/kayemkim/milonga/wiki/Quickstart)
 * [User Guide](https://github.com/kayemkim/milonga/wiki/UserGuide)
+
+ChangeLog
+---------
+* [For 0.11.0](https://github.com/kayemkim/milonga/wiki/ChangeLog_0_11_0)
