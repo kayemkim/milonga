@@ -35,9 +35,9 @@ Easy to Setup
 Using Maven
     	
 	<dependency>
-		<groupId>com.skp</groupId>
+		<groupId>com.skplanet</groupId>
 		<artifactId>milonga</artifactId>
-		<version>milonga_version</version>
+		<version>0.11.0</version>
 	</dependency>
 
 Ready to use Milonga by adding dependency to to your build manager.
